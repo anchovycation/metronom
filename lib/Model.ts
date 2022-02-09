@@ -1,6 +1,8 @@
 import { createClient, RedisClientOptions } from 'redis';
 import ModelInstance from './ModelInstance';
-import { isObject, getKeyValue, hasJsonStructure } from './utility';
+import {
+  isObject, getKeyValue, hasJsonStructure, safeWrite, safeRead,
+} from './utility';
 
 interface ModelOptions {
   keyUnique: any,
@@ -74,28 +76,20 @@ class Model {
     return keys.length > 0 ? await this.redisClient.del(keys) : 0;
   }
 
-  private async _write(redisKey: String, data: Object) {
+  private async _write(redisKey: String, data: Object): Promise<Object> {
     if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
-    const keysAndValues: [String, any][] = Object
-      .entries(data)
-      .map(([key, value]) => [key, typeof value === 'object' ? JSON.stringify(value) : value]); // include array, objects etc.
-    return await this.redisClient.hSet(redisKey, keysAndValues);
+
+    return await safeWrite(data, redisKey, this.redisClient);
   }
 
-  private async _read(redisKey: String) {
+  private async _read(redisKey: String): Promise<Object> {
     if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
-    const response = await this.redisClient.hGetAll(redisKey);
-    const entries = Object
-      .entries(response)
-      .map(
-        ([key, value]: [string, any]) =>
-          [key, (hasJsonStructure(value) ? JSON.parse(value) : value)],
-      );
-    return Object.fromEntries(entries);
+
+    return await safeRead(redisKey, this.redisClient);
   }
 
   private generateRedisKey(data: Object): string {
