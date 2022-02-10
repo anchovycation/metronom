@@ -24,6 +24,6 @@ let userModel = new Model({ name: 1, surname: 2, age: 1 }, 'users', { keyUnique:
   user = await userModel.findById(user.age);
   console.log({ get: user });
 
-  // user = await userModel.deleteById(user.age);
-  // console.log({ delete: user });
+  user = await userModel.deleteById(user.age);
+  console.log({ delete: user });
 })();
