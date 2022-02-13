@@ -1,10 +1,14 @@
 # metronom
-East use Redis ORM
+Easy to use Redis ORM based on [node-redis](https://www.npmjs.com/package/redis)
+## Installation
+```bash
+npm install metronom
+```
+## Usage
 
-# Usage
+### Basic Example
 ```js
-// import model base
-import Model from 'metronom';
+const Model = require('metronom');
 
 // create user model
 // new Model(<model-schema>, <redis-key-prefix>, <model-options>)
@@ -22,7 +26,7 @@ const modelSchema = { // key: defaultValue
 
 const keyPrefix = 'users';  // default 'object'
 const modelOptions = {
-  keyUnique: 'names', // this value must be in to the schema because metronom use it to create redis key like "users:12". Default value is object's created time 
+  keyUnique: 'name', // this value must be in to the schema because metronom use it to create redis key like "users:12". Default value is object's created time 
   redisClientOptions: { /* node-redis configration */ }
 }
 
@@ -57,7 +61,7 @@ console.log(response);
 //     tags:['teacher', 'highschool', 'music'] 
 // }
 
-await userModel.deleteById('alices');
+await userModel.deleteById('alice');
 // 1
 ```
 

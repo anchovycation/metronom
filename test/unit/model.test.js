@@ -1,4 +1,4 @@
-const Model = require('../../dist').default;
+const Model = require('../../dist');
 
 describe('constructor()', () => {
   test('client should connect successfully', () => {
@@ -53,13 +53,12 @@ describe('model.create()', () => {
     const id = Date.now();
     const userModel2 = new Model({ id: 0, messages: [] }, 'users');
     const user = await userModel2.create({ id, messages: ['m1', 'm2', 'm3'] });
-    expect(user.id).toBe(id);
+    expect(Array.isArray(user.messages)).toBe(true);
   });
   test('client should create successfully when data has nested object', async () => {
-    const id = 123456;
-    const userModel2 = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users',{ keyUnique:'id' });
-    const user = await userModel2.create({ id, info: { name: 'alihan', surname: 'sarac', contact: { tel: 123, email: 'asd' } } })
-    expect(user.id).toBe(id);
+    const userModel2 = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
+    const user = await userModel2.create({ id: Date.now(), info: { name: 'alihan', surname: 'sarac', contact: { tel: 123, email: 'asd' } } })
+    expect(user.info.contact.tel).toBe(123);
   });
 })
 
@@ -75,6 +74,13 @@ describe('model.findById()', () => {
   test('client should get null when id is incorrect', async () => {
     const u = await userModel.findById(1000000);
     expect(u).toBeNull();
+  });
+  test('client should objeleri düngün bir şekilde getirilmeli', async () => {
+    const id = Date.now();
+    const userModel2 = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
+    await userModel2.create({ id, info: { name: 'alihan', surname: 'sarac', contact: { tel: 123, email: 'asd' } } })
+    const u = await userModel.findById(id);
+    expect(u.info.contact.email).toBe('asd');
   });
 });
 

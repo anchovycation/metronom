@@ -1,4 +1,5 @@
 import Model from './Model';
+import { safeWrite } from './utility';
 
 interface DataInfo {
   redisKey: String,
@@ -28,11 +29,8 @@ class ModelInstance {
   }
 
   public async save(): Promise<void> {
-    Object.entries(this)
-      .filter(([key, value]) => !(key === '_Model'))
-      .forEach(async ([key, value]) => {
-        await this._Model._model.redisClient.hSet(this._Model._dataInfo.redisKey, key, value);
-      });
+    const { _Model, ...data } = this;
+    await safeWrite(data, _Model._dataInfo.redisKey, _Model._model.redisClient);
   }
 }
 
