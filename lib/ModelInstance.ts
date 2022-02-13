@@ -30,7 +30,13 @@ class ModelInstance {
 
   public async save(): Promise<void> {
     const { _Model, ...data } = this;
-    await safeWrite(data, _Model._dataInfo.redisKey, _Model._model.redisClient);
+    const { redisClient, flexSchema, schema } = _Model._model;
+    await safeWrite(data, _Model._dataInfo.redisKey, redisClient, flexSchema, schema);
+  }
+
+  public toJSON(): Object {
+    const { _Model, ...data } = this;
+    return data;
   }
 }
 
