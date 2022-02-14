@@ -1,6 +1,6 @@
 {
   "name": "metronom",
-  "version": "0.1.1",
+  "version": "1.1.1",
   "description": "Easy to use Redis ORM based on node-redis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

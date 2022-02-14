@@ -16,18 +16,55 @@ export const hasJsonStructure = (str: any): Boolean => {
   }
 };
 
-export const safeRead = async (redisKey: String, redisClient: any): Promise<Object> => {
+export const safeRead = async (
+  redisKey: String,
+  redisClient: any,
+  schema: { [key: string]: any },
+): Promise<Object> => {
   const response = await redisClient.hGetAll(redisKey);
   const entries = Object
     .entries(response)
     .map(
-      ([key, value]: [string, any]) =>
-        [key, (hasJsonStructure(value) ? JSON.parse(value) : value)],
+      ([key, value]: [string, any]) => {
+        if (hasJsonStructure(value)) {
+          value = JSON.parse(value);
+        } else {
+          const typeOfValue = typeof schema[key];
+          const types: { [key: string]: any } = {
+            string: String,
+            number: Number,
+            boolean: Boolean,
+            undefined,
+            null: null,
+          };
+
+          value = typeOfValue === 'undefined' || value === 'null'
+            ? types[typeOfValue]
+            : new types[typeOfValue](value).valueOf(); // convert to primative type
+        }
+        return [key, value];
+      },
     );
   return Object.fromEntries(entries);
 };
 
-export const safeWrite = async (data: Object, redisKey: String, redisClient: any): Promise<Object> => {
+export const safeWrite = async (
+  data: Object,
+  redisKey: String,
+  redisClient: any,
+  isFlex: Boolean = false,
+  schema: Object = {},
+): Promise<Object> => {
+  if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
+    const temp: { [key: string]: any } = schema;
+    Object.entries(data).forEach(([key, value]) => {
+      if (temp[key]) {
+        temp[key] = value;
+      }
+    });
+    data = temp;
+  }
+
   const keysAndValues: [String, any][] = Object
     .entries(data)
     .map(([key, value]) => [key, typeof value === 'object' ? JSON.stringify(value) : value]); // include array, objects etc.
