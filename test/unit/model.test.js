@@ -77,7 +77,7 @@ describe('model.findById()', () => {
   });
   test('client should objeleri düngün bir şekilde getirilmeli', async () => {
     const id = Date.now();
-    const userModel2 = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
+    const userModel2 = new Model({ id: 0 }, 'users', { keyUnique: 'id', flexSchema: true });
     await userModel2.create({ id, info: { name: 'alihan', surname: 'sarac', contact: { tel: 123, email: 'asd' } } })
     const u = await userModel.findById(id);
     expect(u.info.contact.email).toBe('asd');

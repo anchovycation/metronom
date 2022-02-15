@@ -1,12 +1,13 @@
 import { createClient, RedisClientOptions } from 'redis';
 import ModelInstance from './ModelInstance';
 import {
-  isObject, getKeyValue, hasJsonStructure, safeWrite, safeRead,
+  isObject, getKeyValue, safeWrite, safeRead,
 } from './utility';
 
 interface ModelOptions {
-  keyUnique: any,
+  keyUnique?: string,
   redisClientOptions?: RedisClientOptions,
+  flexSchema?: boolean,
 }
 
 class Model {
@@ -21,9 +22,12 @@ class Model {
 
   public redisClient: any;
 
+  public flexSchema: Boolean | undefined;
+
   constructor(schema: Object, keyPrefix = 'object', modelOption?: ModelOptions) {
     this.schema = schema;
     this.keyPrefix = keyPrefix;
+    this.flexSchema = modelOption?.flexSchema;
 
     if (!modelOption?.keyUnique) {
       this.keyUnique = undefined;
@@ -81,7 +85,7 @@ class Model {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
 
-    return await safeWrite(data, redisKey, this.redisClient);
+    return await safeWrite(data, redisKey, this.redisClient, this.flexSchema, this.schema);
   }
 
   private async _read(redisKey: String): Promise<Object> {
@@ -89,7 +93,7 @@ class Model {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
 
-    return await safeRead(redisKey, this.redisClient);
+    return await safeRead(redisKey, this.redisClient, this.schema);
   }
 
   private generateRedisKey(data: Object): string {

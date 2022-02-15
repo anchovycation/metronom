@@ -1,29 +1,46 @@
 const Model = require('../dist');
 
-let userModel = new Model({ name: 1, surname: 2, age: 1 }, 'users', { keyUnique: 'age' });
+const userModel = new Model(
+  {
+    name: 'John',
+    surname: 'Doe',
+    age: 1,
+    isAdmin: false
+  },
+  'users',
+  { keyUnique: 'age' }
+);
+
+const flexUserModel = new Model(
+  {
+    id: 1
+  },
+  'users',
+  { keyUnique: 'id', flexSchema: true }
+);
 
 (async () => {
-  const schema = {
-    name: 'alihan',
-    messages: ['asdasd', 'sdfbsrtdrgf'],
+  const data = {
+    surname: 'Black',
     age: 20,
-    test: {
-      a: 15,
-      b: {
-        c: [1, 2, true],
-        d: false
-      }
-    }
+    job: 'teacher' // Dont save because userModel is not flex
   };
-  let user = await userModel.create(schema);
-  console.log({ create: user });
+  let user = await userModel.create(data);
+  console.log({ create: user.toJSON() });
 
-  user.name = 'beyza';
+  user.name = 'Michel';
   await user.save();
 
   user = await userModel.findById(user.age);
-  console.log({ get: user });
+  console.log({ find: user.toJSON() });
 
   user = await userModel.deleteById(user.age);
   console.log({ delete: user });
+
+  user = await flexUserModel.create({
+    id: Date.now(),
+    tel: 123456789,
+    address: 'abcd'
+  });
+  console.log({ createFlex: user.toJSON() });
 })();
