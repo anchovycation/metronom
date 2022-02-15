@@ -1,37 +1,60 @@
-## Welcome to GitHub Pages
+## Welcome to Metronom
+Metronome is a high-level and easy-to-use **[Redis](https://redis.io/)** ORM based on **[node-redis](https://github.com/redis/node-redis)**. It provides ease of use by keeping your objects in hash on Redis without the need to install any plugins.
 
-You can use the [editor on GitHub](https://github.com/anchovycation/metronom/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+If the type of the value in your object is supported by Redis, it keeps it in its own type. If it is among unsupported types such as array, object, it converts the data to JSON and keeps it as a string in Redis, and while reading it, it converts it back to JavaScript types according to the schema you specify.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+### Usage
+First you have to download metronome in to your project via npm
+```bash
+npm install metronom
 ```
+Now you can import **metronom**
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+```js
+const Model = require('metronom');
 
-### Jekyll Themes
+// create user model
+const modelSchema = { // key: defaultValue 
+  name: '',
+  age: 1,
+  job: {
+    name: 'teacher',
+    room: 12,
+    isManeger: false
+  },
+  tags: ['teacher', 'highschool', 'math']
+},
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/anchovycation/metronom/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+const userModel = new Model(modelSchema, 'users');
 
+const alice = await userModel.create({
+  name: 'alice',
+  age: 35
+);
+// {
+//     name: 'alice',
+//     age: 35,
+//     job: {
+//         name: 'teacher',
+//         room: 205,
+//         isManeger: true
+//     },
+//     tags:['teacher', 'highschool', 'music'] 
+// }
+
+
+alice.age = 36;
+await alice.save();
+// {
+//     name: 'alice',
+//     age: 36,
+//     job: {
+//         name: 'teacher',
+//         room: 205,
+//         isManeger: true
+//     },
+//     tags:['teacher', 'highschool', 'music'] 
+// }
+```
 ### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Having trouble with **metronom**? Check out our [GitHub issues](https://github.com/anchovycation/metronom/issues) or contact support and we’ll help you sort it out.
