@@ -1,4 +1,4 @@
-import { createClient, RedisClientOptions } from 'redis';
+import { createClient, RedisClientOptions, RedisClientType } from 'redis';
 import ModelInstance from './ModelInstance';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
@@ -20,7 +20,7 @@ class Model {
 
   public schema: Object;
 
-  public redisClient: any;
+  public redisClient: RedisClientType<any, any>;
 
   public flexSchema: Boolean | undefined;
 
@@ -76,7 +76,7 @@ class Model {
   }
 
   public async deleteAll(options?: any) {
-    const keys: String[] = await this.redisClient.keys(`${this.keyPrefix}:*`);
+    const keys: any = await this.redisClient.keys(`${this.keyPrefix}:*`);
     return keys.length > 0 ? await this.redisClient.del(keys) : 0;
   }
 
@@ -103,7 +103,7 @@ class Model {
     return `${this.keyPrefix}:${u}`;
   }
 
-  public async runCommand(commands: Array<String>): Promise<any> {
+  public async runCommand(commands: any | Array<String>): Promise<any> {
     return await this.redisClient.sendCommand(commands); // ['hget', 'user:1', 'name']
   }
 }
