@@ -37,17 +37,17 @@ const alice = await userModel.create({
 //     job: {
 //         name: 'teacher',
 //         room: 205,
-//         isManeger: true
+//         isManeger: false
 //     },
 //     tags:['teacher', 'highschool', 'music'] 
 // }
 
 
-alice.age = 36;
+alice.job.isManager = true;
 await alice.save();
 // {
 //     name: 'alice',
-//     age: 36,
+//     age: 35,
 //     job: {
 //         name: 'teacher',
 //         room: 205,
@@ -56,5 +56,6 @@ await alice.save();
 //     tags:['teacher', 'highschool', 'music'] 
 // }
 ```
+> Other commands will be added as soon as possible. For detailed information, you can visit our GitHub address.
 ### Support or Contact
-Having trouble with **metronom**? Check out our [GitHub issues](https://github.com/anchovycation/metronom/issues) or contact support and we’ll help you sort it out.
+Having trouble with **[metronom]()**? Check out our [GitHub issues](https://github.com/anchovycation/metronom/issues) or contact support and we’ll help you sort it out.
