@@ -22,7 +22,7 @@ const flexUserModel = new Model(
 (async () => {
   const data = {
     surname: 'Black',
-    age: 20,
+    age: Date.now(),
     job: 'teacher' // Dont save because userModel is not flex
   };
   let user = await userModel.create(data);
@@ -33,6 +33,9 @@ const flexUserModel = new Model(
 
   user = await userModel.findById(user.age);
   console.log({ find: user.toJSON() });
+
+  user = await userModel.getAll();
+  console.log({ getAll: user });
 
   user = await userModel.deleteById(user.age);
   console.log({ delete: user });
