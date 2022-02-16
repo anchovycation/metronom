@@ -99,17 +99,34 @@ describe('model.deleteById()', () => {
   });
 });
 
-// describe('model.deleteAll()', () => {
-//   const userModel = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
+describe('model.deleteAll()', () => {
+  const userModel = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
 
-//   test('client should get 1 when this model\'s keys deleted succesfully', async () => {
-//     const isDeleted = await userModel.deleteAll();
-//     const isKeyExist = (await userModel.redisClient.keys(`${userModel.keyPrefix}:*`)).length > 0;
-//     expect(isDeleted && !isKeyExist).toEqual(true);
-//   });
-//   test('client should get 0 when records cant deleted', async () => {
-//     const isDeleted = await userModel.deleteAll();
-//     const isKeyExist = (await userModel.redisClient.keys(`${userModel.keyPrefix}:*`)).length > 0;
-//     expect(!isDeleted && !isKeyExist).toEqual(true);
-//   });
-// });
+  test('client should get 1 when this model\'s keys deleted succesfully', async () => {
+    const isDeleted = await userModel.deleteAll();
+    const isKeyExist = (await userModel.redisClient.keys(`${userModel.keyPrefix}:*`)).length > 0;
+    expect(isDeleted && !isKeyExist).toEqual(true);
+  });
+  test('client should get 0 when records cant deleted', async () => {
+    const isDeleted = await userModel.deleteAll();
+    const isKeyExist = (await userModel.redisClient.keys(`${userModel.keyPrefix}:*`)).length > 0;
+    expect(!isDeleted && !isKeyExist).toEqual(true);
+  });
+});
+
+describe('model.getAll()', () => {
+  const userModel = new Model({ id: 0, name: '', surname: '', age: 1 }, 'users', { keyUnique: 'id' });
+
+  test('client should find succesfully when created new record', async () => {
+    const id = Date.now();
+    await userModel.create({ id, name: 'beyza', surname: 'erkan', age: 19 })
+    const users = await userModel.getAll();
+    expect(users).not.toBeNull();
+  });
+
+  test('client should get empty array when records are not found', async () => {
+    await userModel.deleteAll();
+    const users = await userModel.getAll();
+    expect(users).toEqual([]);
+  });
+});

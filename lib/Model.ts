@@ -62,6 +62,16 @@ class Model {
     return new ModelInstance(valueObject, this, { redisKey });
   }
 
+  public async getAll() {
+    const keys: String[] = await this.redisClient.keys(`${this.keyPrefix}:*`);
+    const results: any[] = [];
+    for await (const key of keys) {
+      const response = await this._read(key);
+      results.push(new ModelInstance(response, this, { redisKey: key }));
+    }
+    return results;
+  }
+
   public async findById(id: any): Promise<ModelInstance | null> {
     const redisKey: string = `${this.keyPrefix}:${id}`;
     const response = await this._read(redisKey);
