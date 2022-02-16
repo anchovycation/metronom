@@ -124,7 +124,7 @@ describe('model.getAll()', () => {
     expect(users).not.toBeNull();
   });
 
-  test('client should get empty array when record deleted succesfully', async () => {
+  test('client should get empty array when records are not found', async () => {
     const id = Date.now();
     await userModel.deleteAll();
     const users = await userModel.getAll();
