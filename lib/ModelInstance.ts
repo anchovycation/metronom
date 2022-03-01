@@ -34,9 +34,13 @@ class ModelInstance {
     await safeWrite(data, _Model._dataInfo.redisKey, redisClient, flexSchema, schema);
   }
 
-  public toJSON(): Object {
+  public getPureData(): Object {
     const { _Model, ...data } = this;
     return data;
+  }
+
+  public toJSON(): string {
+    return JSON.stringify(this.getPureData());
   }
 }
 

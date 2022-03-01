@@ -26,13 +26,13 @@ const flexUserModel = new Model(
     job: 'teacher' // Dont save because userModel is not flex
   };
   let user = await userModel.create(data);
-  console.log({ create: user.toJSON() });
+  console.log({ create: user.getPureData() });
 
   user.name = 'Michel';
   await user.save();
 
   user = await userModel.findById(user.age);
-  console.log({ find: user.toJSON() });
+  console.log({ find: user.getPureData() });
 
   user = await userModel.getAll();
   console.log({ getAll: user });
@@ -45,5 +45,5 @@ const flexUserModel = new Model(
     tel: 123456789,
     address: 'abcd'
   });
-  console.log({ createFlex: user.toJSON() });
+  console.log({ createFlex: user.getPureData() });
 })();
