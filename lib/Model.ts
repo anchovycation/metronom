@@ -1,5 +1,5 @@
 import { createClient, RedisClientOptions, RedisClientType } from 'redis';
-import ModelInstance from './ModelInstance';
+import ModelInstance, { DataInfo } from './ModelInstance';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './utility';
@@ -59,7 +59,7 @@ class Model {
 
     await this._write(redisKey, valueObject);
 
-    return new ModelInstance(valueObject, this, { redisKey });
+    return this.createInstance(valueObject, { redisKey });
   }
 
   public async getAll() {
@@ -67,7 +67,7 @@ class Model {
     const results: any[] = [];
     for await (const key of keys) {
       const response = await this._read(key);
-      results.push(new ModelInstance(response, this, { redisKey: key }));
+      results.push(this.createInstance(response, { redisKey: key }));
     }
     return results;
   }
@@ -78,7 +78,7 @@ class Model {
     if (Object.entries(response).length === 0) {
       return null;
     }
-    return new ModelInstance(response, this, { redisKey });
+    return this.createInstance(response, { redisKey });
   }
 
   public async deleteById(id: any): Promise<number> {
@@ -115,6 +115,10 @@ class Model {
 
   public async runCommand(commands: any | Array<String>): Promise<any> {
     return await this.redisClient.sendCommand(commands); // ['hget', 'user:1', 'name']
+  }
+
+  private createInstance(data: Object, dataInfo: DataInfo): ModelInstance {
+    return new ModelInstance(data, this, dataInfo);
   }
 }
 

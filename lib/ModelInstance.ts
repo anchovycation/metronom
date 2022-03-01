@@ -1,7 +1,7 @@
 import Model from './Model';
 import { safeWrite } from './utility';
 
-interface DataInfo {
+export interface DataInfo {
   redisKey: String,
 }
 
