@@ -10,6 +10,11 @@ interface ModelOptions {
   flexSchema?: boolean,
 }
 
+interface FilterFunction {
+  /* eslint-disable-next-line */
+  (value: ModelInstance, index: number, array: ModelInstance[]): boolean
+}
+
 class Model {
   /* eslint-disable no-undef */
   [index: string]: any // index signature
@@ -62,7 +67,7 @@ class Model {
     return this.createInstance(valueObject, { redisKey });
   }
 
-  public async getAll() {
+  public async getAll(): Promise<Array<ModelInstance> | []> {
     const keys: String[] = await this.redisClient.keys(`${this.keyPrefix}:*`);
     const results: any[] = [];
     for await (const key of keys) {
@@ -90,6 +95,21 @@ class Model {
     return keys.length > 0 ? await this.redisClient.del(keys) : 0;
   }
 
+  public async runCommand(commands: any | Array<String>): Promise<any> {
+    return await this.redisClient.sendCommand(commands); // ['hget', 'user:1', 'name']
+  }
+
+  public async filter(filterFunction: FilterFunction): Promise<Array<ModelInstance> | []> {
+    if (typeof filterFunction !== 'function') {
+      throw new Error('The type of the parameter of the "filter" function must be "function"!');
+    }
+    const records: Array<ModelInstance> = await this.getAll();
+    const filtredRecords = records.filter(async (value, index, array) =>
+      await filterFunction(value, index, array)
+    );
+    return filtredRecords;
+  }
+
   private async _write(redisKey: String, data: Object): Promise<Object> {
     if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
       redisKey = `${this.keyPrefix}:${redisKey}`;
@@ -111,10 +131,6 @@ class Model {
       ? getKeyValue(this.keyUnique.toString())(data)
       : Date.now() + Math.floor(Math.random() * 99999);
     return `${this.keyPrefix}:${u}`;
-  }
-
-  public async runCommand(commands: any | Array<String>): Promise<any> {
-    return await this.redisClient.sendCommand(commands); // ['hget', 'user:1', 'name']
   }
 
   private createInstance(data: Object, dataInfo: DataInfo): ModelInstance {

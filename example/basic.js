@@ -34,8 +34,8 @@ const flexUserModel = new Model(
   user = await userModel.findById(user.age);
   console.log({ find: user.getPureData() });
 
-  user = await userModel.getAll();
-  console.log({ getAll: user });
+  let users = await userModel.getAll();
+  console.log({ getAll: users });
 
   user = await userModel.deleteById(user.age);
   console.log({ delete: user });
@@ -46,4 +46,7 @@ const flexUserModel = new Model(
     address: 'abcd'
   });
   console.log({ createFlex: user.getPureData() });
+
+  users = await userModel.filter((user) => user.age > 18);
+  console.log({ filter: users })
 })();
