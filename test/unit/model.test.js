@@ -1,6 +1,6 @@
 const Model = require('../../dist');
 
-describe('constructor()', () => {
+describe('Model.constructor()', () => {
   test('client should connect successfully', () => {
     const userModel = new Model({ name: '', surname: '', age: 1 }, 'users', { keyUnique: 'age' });
     expect(userModel.redisClient).not.toBeUndefined();

@@ -1,7 +1,20 @@
+/**
+ * Utilities
+ * @category Utilities
+ */
+
 export function isObject(variable: any): Boolean {
   return variable === null || (variable && variable.toString() === '[object Object]');
 }
 
+/**
+ * Get value's of object with key
+ * @param key - wanted key of object
+ * @example
+ * ```
+ *  getKeyValue("name")(user) // joey
+ * ```
+ */
 export const getKeyValue = (key: string) => (obj: Record<string, any>) => obj[key];
 
 export const hasJsonStructure = (str: any): Boolean => {
@@ -16,6 +29,13 @@ export const hasJsonStructure = (str: any): Boolean => {
   }
 };
 
+/**
+ * Read record from Redis and restruct it like schema
+ * @param redisKey - Redis record key with `keyPrefix` and `keyUnique` 
+ * @param redisClient - Connected Redis client
+ * @param schema - Model schema
+ * @returns raw object
+ */
 export const safeRead = async (
   redisKey: String,
   redisClient: any,
@@ -48,6 +68,14 @@ export const safeRead = async (
   return Object.fromEntries(entries);
 };
 
+/**
+ * Control data with isFlex and schema then serialize and write it into redis
+ * @param data - Raw data
+ * @param redisKey - Redis record key with `keyPrefix` and `keyUnique`  
+ * @param redisClient  - Connected Redis client
+ * @param isFlex - if it is true you can pass diffirent key from schema
+ * @param schema - Model schema
+ */
 export const safeWrite = async (
   data: Object,
   redisKey: String,
