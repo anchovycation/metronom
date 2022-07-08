@@ -77,18 +77,16 @@ export const safeRead = async (
  * @param schema - Model schema
  */
 export const safeWrite = async (
-  data: Object,
+  data: { [key: string | number]: any } ,
   redisKey: String,
   redisClient: any,
-  isFlex: Boolean = false,
   schema: Object = {},
+  isFlex: Boolean | null = false, 
 ): Promise<Object> => {
   if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
-    const temp: { [key: string]: any } = schema;
-    Object.entries(data).forEach(([key, value]) => {
-      if (temp[key]) {
-        temp[key] = value;
-      }
+    const temp: { [key: string]: any } = {};
+    Object.entries(schema).forEach(([key, value]) => { // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
+      temp[key] = data[key] || value; 
     });
     data = temp;
   }
