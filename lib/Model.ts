@@ -181,7 +181,7 @@ class Model {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
 
-    return await safeWrite(data, redisKey, this.redisClient, this.flexSchema, this.schema);
+    return await safeWrite(data, redisKey, this.redisClient, this.schema, this.flexSchema);
   }
 
   /**

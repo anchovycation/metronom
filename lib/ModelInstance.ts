@@ -31,7 +31,7 @@ class ModelInstance {
   public async save(): Promise<void> {
     const { _Model, ...data } = this;
     const { redisClient, flexSchema, schema } = _Model._model;
-    await safeWrite(data, _Model._dataInfo.redisKey, redisClient, flexSchema, schema);
+    await safeWrite(data, _Model._dataInfo.redisKey, redisClient, schema, flexSchema);
   }
 
   public getPureData(): Object {
