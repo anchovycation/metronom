@@ -11,11 +11,25 @@ interface ModelFields {
   _dataInfo: DataInfo;
 }
 
+/**
+ * ModelInstance Class
+ * @class ModelInstance
+ * @category ModelInstance
+ */
 class ModelInstance {
   /* eslint-disable no-undef */
   [index: string]: any // index signature
 
   public _Model: ModelFields;
+
+  /**
+   * Represents an object produced from Metronom ORM Model
+   * @constructor
+   * @param {Object} data - Lead data
+   * @param {Model} model - Parent model to generate object
+   * @param {DataInfo} dataInfo - The place where redis information about the record is kept.
+   * @returns {ModelInstance} new record of ModelInstance 
+   */
 
   constructor(data: Object, model: Model, dataInfo: DataInfo) {
     this._Model = {
@@ -28,17 +42,29 @@ class ModelInstance {
     });
   }
 
+  /**
+   * Saves the current state of the object to Redis.
+   */
   public async save(): Promise<void> {
     const { _Model, ...data } = this;
     const { redisClient, flexSchema, schema } = _Model._model;
     await safeWrite(data, _Model._dataInfo.redisKey, redisClient, schema, flexSchema);
   }
 
+  /**
+   * Clears all metronome-related data within the object and restores it to its raw state.
+   * @returns {Object} raw data
+   */
   public getPureData(): Object {
     const { _Model, ...data } = this;
     return data;
   }
 
+
+  /**
+   * Converts the object to JSON
+   * @returns {string} stringified object
+   */
   public toJSON(): string {
     return JSON.stringify(this.getPureData());
   }
