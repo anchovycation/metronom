@@ -27,7 +27,7 @@
     "test": "npm run build && docker-compose -f ./test/docker-compose.yml up -d --build && npm run test:unit",
     "lint": "eslint --ext .ts ./lib",
     "lint:fix": "npm run lint -- --fix",
-    "doc": "typedoc lib/Model.ts"
+    "doc": "typedoc lib/Model*.ts"
   },
   "dependencies": {
     "redis": "^4.0.3"
