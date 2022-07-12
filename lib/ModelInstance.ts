@@ -68,6 +68,16 @@ class ModelInstance {
   public toJSON(): string {
     return JSON.stringify(this.getPureData());
   }
+
+  /**
+   * Destroy the object from Redis.
+   * @returns {boolean} Returns true or false that it has been deleted.  
+   */
+  public async destroy(): Promise<boolean> {
+    const redisClient = this._Model._model.redisClient;
+    const willBeDeleted = await redisClient.del(`${this._Model._dataInfo.redisKey}`);
+    return willBeDeleted != 0 ? true : false;
+  }
 }
 
 export default ModelInstance;
