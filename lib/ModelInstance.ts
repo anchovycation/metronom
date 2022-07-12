@@ -74,9 +74,8 @@ class ModelInstance {
    * @returns {boolean} Returns true or false that it has been deleted.  
    */
   public async destroy(): Promise<boolean> {
-    const { _Model }  = this;
-    const redisClient = _Model._model.redisClient;
-    const willBeDeleted = await redisClient.del(`${_Model._dataInfo.redisKey}`);
+    const redisClient = this._Model._model.redisClient;
+    const willBeDeleted = await redisClient.del(`${this._Model._dataInfo.redisKey}`);
     return willBeDeleted != 0 ? true : false;
   }
 }
