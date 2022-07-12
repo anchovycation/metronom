@@ -49,4 +49,9 @@ const flexUserModel = new Model(
 
   users = await userModel.filter((user) => user.age > 18);
   console.log({ filter: users })
+  
+  let newUser = await userModel.create(data);
+  newUser = await flexUserModel.findById(newUser.age);
+  console.log({newUser: newUser})
+  await newUser.destroy();
 })();
