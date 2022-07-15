@@ -124,6 +124,8 @@ describe('model.getAll()', () => {
     expect(users).not.toBeNull();
   });
 
+  
+
   test('client should get empty array when records are not found', async () => {
     await userModel.deleteAll();
     const users = await userModel.getAll();

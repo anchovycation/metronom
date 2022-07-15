@@ -2,7 +2,7 @@ import { createClient, RedisClientOptions, RedisClientType } from 'redis';
 import ModelInstance, { DataInfo } from './ModelInstance';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
-} from './utility';
+} from './Utilities';
 
 interface ModelOptions {
   keyUnique?: string,
@@ -13,6 +13,10 @@ interface ModelOptions {
 interface FilterFunction {
   /* eslint-disable-next-line */
   (value: ModelInstance, index: number, array: ModelInstance[]): boolean
+}
+
+interface FilterOptions {
+  limit?: number,
 }
 
 /**
@@ -35,7 +39,9 @@ class Model {
 
   public redisClient: RedisClientType<any, any>;
 
-  /** you can't define any key except the fields in `schema`, but if this value is `true`, you can only add a value to the schema by giving it `keyUnique` */
+  /** you can't define any key except the fields in `schema`, but if this value is `true`,
+   * you can only add a value to the schema by giving it `keyUnique`
+   */
   public flexSchema: Boolean | undefined;
 
   /**
@@ -45,9 +51,10 @@ class Model {
    * @param {string} keyPrefix - Record unique key's prefix. `"users:1234"` --> "`keyPrefix`:`keyUnique`"
    * @param {ModelOptions} modelOption - Optional model settings. It's include 3 key.
    *   + `keyUnique`: it's unique part of model key
-   *   + `flexSchema`: Normally, you can't define any key except the fields in `schema`, but if this value is `true`, you can only add a value to the schema by giving it `keyUnique`
-   *   + `redisClientOptions`: node-redis client options. 
-   * @returns {Model} new record of Model 
+   *   + `flexSchema`: Normally, you can't define any key except the fields in `schema`,
+   *                   but if this value is `true`, you can only add a value to the schema by giving it `keyUnique`
+   *   + `redisClientOptions`: node-redis client options.
+   * @returns {Model} new record of Model
    */
   constructor(schema: Object, keyPrefix = 'object', modelOption?: ModelOptions) {
     this.schema = schema;
@@ -64,14 +71,16 @@ class Model {
     }
 
     this.redisClient = createClient(modelOption?.redisClientOptions);
-    try{
+    try {
       this.redisClient.connect();
-    } catch ( error: any ){
+    } catch (error: any) {
       throw new Error(`Metronom: redis connecting error: ${error.message}`);
     }
   }
 
-    /**
+  // #region WRITE OPERATIONS
+
+  /**
    * Creates `ModelInstance` by parameter then saves it to Redis and returns it
    * @param {Object} valueObject - data to be saved according to the `Model.schema`
    * @returns {ModelInstance} new ModelInstance
@@ -97,22 +106,39 @@ class Model {
   }
 
   /**
-   * Fetches all records with the same `keyPrefix` value 
-   * @returns {Array<ModelInstance>} List of ModelInstance
-   */
-  public async getAll(): Promise<Array<ModelInstance> | []> {
-    const keys: String[] = await this.redisClient.keys(`${this.keyPrefix}:*`);
-    const results: any[] = [];
-    for await (const key of keys) {
-      const response = await this._read(key);
-      results.push(this.createInstance(response, { redisKey: key }));
+ * Internal record save function
+ * @param redisKey - Redis record key with/without `keyUnique`
+ * @param data
+ * @returns raw data
+ */
+  private async _write(redisKey: String, data: Object): Promise<Object> {
+    if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
+      redisKey = `${this.keyPrefix}:${redisKey}`;
     }
-    return results;
+
+    return await safeWrite(data, redisKey, this.redisClient, this.schema, this.flexSchema);
+  }
+
+  // #endregion WRITE OPERATIONS
+
+  // #region READ OPERATIONS
+
+  /**
+   * Internal read function
+   * @param redisKey - Redis record key with/without `keyUnique`
+   * @returns raw data
+   */
+  private async _read(redisKey: String): Promise<Object> {
+    if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
+      redisKey = `${this.keyPrefix}:${redisKey}`;
+    }
+
+    return await safeRead(redisKey, this.redisClient, this.schema);
   }
 
   /**
    * Fetches record by `keyUnique`
-   * @param {number | string} id - `keyUnique`   
+   * @param {number | string} id - `keyUnique`
    * @returns {ModelInstance} ModelInstance or null
    */
   public async findById(id: any): Promise<ModelInstance | null> {
@@ -125,33 +151,20 @@ class Model {
   }
 
   /**
-   * delete record by `keyUnique`
-   * @param {number | string} id - `keyUnique`   
-   * @returns {number} deleted records count it always '1' if it succesfull
+   * Fetches all records with the same `keyPrefix` value
+   * @returns {Array<ModelInstance>} List of ModelInstance
    */
-  public async deleteById(id: any): Promise<number> {
-    return await this.redisClient.del(`${this.keyPrefix}:${id}`);
-  }
-
-    /**
-   * Delete all records with the same `keyPrefix` value 
-   * @returns {number} deleted records count or 0
-   */
-  public async deleteAll(options?: any) {
-    const keys: any = await this.redisClient.keys(`${this.keyPrefix}:*`);
-    return keys.length > 0 ? await this.redisClient.del(keys) : 0;
-  }
-
-  /**
-   * Redis command executer
-   * @param {Array<any>} commands - Redis command list.
-   * @example
-   * ```
-   * runCommand(['hget', 'user:1234', 'name'])
-   * ```
-   */
-  public async runCommand(commands: any | Array<String>): Promise<any> {
-    return await this.redisClient.sendCommand(commands);
+  public async getAll(options?: FilterOptions): Promise<Array<ModelInstance> | []> {
+    let keys: String[] = await this.redisClient.keys(`${this.keyPrefix}:*`);
+    if (options?.limit) {
+      keys = keys.slice(0, options.limit);
+    }
+    const results: any[] = [];
+    for await (const key of keys) {
+      const response = await this._read(key);
+      results.push(this.createInstance(response, { redisKey: key }));
+    }
+    return results;
   }
 
   /**
@@ -165,36 +178,44 @@ class Model {
     }
     const records: Array<ModelInstance> = await this.getAll();
     const filtredRecords = records.filter(async (value, index, array) =>
-      await filterFunction(value, index, array)
-    );
+      await filterFunction(value, index, array));
     return filtredRecords;
   }
 
-  /**
-   * Internal record save function
-   * @param redisKey - Redis record key with/without `keyUnique` 
-   * @param data 
-   * @returns raw data
-   */
-  private async _write(redisKey: String, data: Object): Promise<Object> {
-    if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
-      redisKey = `${this.keyPrefix}:${redisKey}`;
-    }
+  // #endregion READ OPERATIONS
 
-    return await safeWrite(data, redisKey, this.redisClient, this.schema, this.flexSchema);
+  // #region DELETE OPERATIONS
+
+  /**
+   * delete record by `keyUnique`
+   * @param {number | string} id - `keyUnique`
+   * @returns {number} deleted records count it always '1' if it succesfull
+   */
+  public async deleteById(id: any): Promise<number> {
+    return await this.redisClient.del(`${this.keyPrefix}:${id}`);
   }
 
   /**
-   * Internal read function
-   * @param redisKey - Redis record key with/without `keyUnique` 
-   * @returns raw data
+   * Delete all records with the same `keyPrefix` value
+   * @returns {number} deleted records count or 0
    */
-  private async _read(redisKey: String): Promise<Object> {
-    if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
-      redisKey = `${this.keyPrefix}:${redisKey}`;
-    }
+  public async deleteAll(options?: any) {
+    const keys: any = await this.redisClient.keys(`${this.keyPrefix}:*`);
+    return keys.length > 0 ? await this.redisClient.del(keys) : 0;
+  }
 
-    return await safeRead(redisKey, this.redisClient, this.schema);
+  // #endregion DELETE OPERATIONS
+
+  /**
+   * Redis command executer
+   * @param {Array<any>} commands - Redis command list.
+   * @example
+   * ```
+   * runCommand(['hget', 'user:1234', 'name'])
+   * ```
+   */
+  public async runCommand(commands: any | Array<String>): Promise<any> {
+    return await this.redisClient.sendCommand(commands);
   }
 
   /**
@@ -211,7 +232,7 @@ class Model {
   /**
    * Create ModelInstance from raw data
    * @param data - raw
-   * @param dataInfo 
+   * @param dataInfo
    */
   private createInstance(data: Object, dataInfo: DataInfo): ModelInstance {
     return new ModelInstance(data, this, dataInfo);

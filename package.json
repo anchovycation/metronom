@@ -21,7 +21,7 @@
   ],
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "start": "tsc --watch -p ./tsconfig.json",
+    "watch": "tsc --watch -p ./tsconfig.json",
     "build": "tsc",
     "test:unit": "jest ./test/unit --verbose --forceExit",
     "test": "npm run build && docker-compose -f ./test/docker-compose.yml up -d --build && npm run test:unit",
