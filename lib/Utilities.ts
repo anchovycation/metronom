@@ -31,7 +31,7 @@ export const hasJsonStructure = (str: any): Boolean => {
 
 /**
  * Read record from Redis and restruct it like schema
- * @param redisKey - Redis record key with `keyPrefix` and `keyUnique` 
+ * @param redisKey - Redis record key with `keyPrefix` and `keyUnique`
  * @param redisClient - Connected Redis client
  * @param schema - Model schema
  * @returns raw object
@@ -71,22 +71,22 @@ export const safeRead = async (
 /**
  * Control data with isFlex and schema then serialize and write it into redis
  * @param data - Raw data
- * @param redisKey - Redis record key with `keyPrefix` and `keyUnique`  
+ * @param redisKey - Redis record key with `keyPrefix` and `keyUnique`
  * @param redisClient  - Connected Redis client
  * @param isFlex - if it is true you can pass diffirent key from schema
  * @param schema - Model schema
  */
 export const safeWrite = async (
-  data: { [key: string | number]: any } ,
+  data: { [key: string | number]: any },
   redisKey: String,
   redisClient: any,
   schema: Object = {},
-  isFlex: Boolean | null = false, 
+  isFlex: Boolean | null = false,
 ): Promise<Object> => {
   if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
     const temp: { [key: string]: any } = {};
     Object.entries(schema).forEach(([key, value]) => { // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
-      temp[key] = data[key] || value; 
+      temp[key] = data[key] || value;
     });
     data = temp;
   }

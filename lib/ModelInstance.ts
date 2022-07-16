@@ -1,5 +1,5 @@
 import Model from './Model';
-import { safeWrite } from './utility';
+import { safeWrite } from './Utilities';
 
 export interface DataInfo {
   redisKey: String,
@@ -28,7 +28,7 @@ class ModelInstance {
    * @param {Object} data - Lead data
    * @param {Model} model - Parent model to generate object
    * @param {DataInfo} dataInfo - The place where redis information about the record is kept.
-   * @returns {ModelInstance} new record of ModelInstance 
+   * @returns {ModelInstance} new record of ModelInstance
    */
 
   constructor(data: Object, model: Model, dataInfo: DataInfo) {
@@ -60,7 +60,6 @@ class ModelInstance {
     return data;
   }
 
-
   /**
    * Converts the object to JSON
    * @returns {string} stringified object
@@ -71,12 +70,12 @@ class ModelInstance {
 
   /**
    * Destroy the object from Redis.
-   * @returns {boolean} Returns true or false that it has been deleted.  
+   * @returns {boolean} Returns true or false that it has been deleted.
    */
   public async destroy(): Promise<boolean> {
-    const redisClient = this._Model._model.redisClient;
+    const { redisClient } = this._Model._model;
     const willBeDeleted = await redisClient.del(`${this._Model._dataInfo.redisKey}`);
-    return willBeDeleted != 0 ? true : false;
+    return willBeDeleted !== 0;
   }
 }
 

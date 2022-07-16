@@ -1,4 +1,4 @@
-const { isObject, getKeyValue } = require('../../dist/lib/utility');
+const { isObject, getKeyValue } = require('../../dist/lib/Utilities');
 
 describe('isObject()', () => {
   test('should return true when data type is object', () => {
