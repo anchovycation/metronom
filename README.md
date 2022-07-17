@@ -18,8 +18,7 @@ npm install metronom
 ## Usage
 
 ### Model Basics
-Represents a Metronom ORM Model. Returns new record of Model.
-
+Represents the Redis object you created in your database. You can create, read, update, delete, filter operations. It also includes system information.
 ```js
 // create user model
 // new Model(<model-schema>, <redis-key-prefix>, <model-options>)
@@ -92,6 +91,7 @@ runCommand(['hget', 'user:1234', 'name'])
 ```
 
 ## ModelInstance Basics
+It is the object from the Redis. You can directly process on the record then save or destroy it.
 ### UPDATE Methods
 #### `save`
 Saves the current state of the object to Redis.
@@ -124,6 +124,50 @@ Converts the object to JSON. Returns stringified object.
 // convert the user object to JSON
 user = await  userModel.findById(user.age);
 await user.toJSON()
+```
+
+## Basic.js
+```js
+const Model = require('metronom');
+
+const userModel = new Model(
+  {
+    name: 'John',
+    surname: 'Doe',
+    age: 1,
+    isAdmin: false
+  },
+  'users',
+  { keyUnique: 'name' }
+);
+
+let user = await userModel.create({
+  name: 'Chandler',
+  surname: 'Bing',
+  age: 18,
+});
+// Redis key - 'users:Chandler'
+// {
+//  name: 'Chandler',
+//  surname: 'Bing',
+//  age: 18,
+//  isAdmin: false
+// }
+
+user.isAdmin = true;
+await user.save();
+
+let admin = userModel.findById('Chandler');
+
+// {
+//  name: 'Chandler',
+//  surname: 'Bing',
+//  age: 18,
+//  isAdmin: true
+// }
+
+// del users:Chandler
+await admin.destroy();
 ```
 
 ## Contributors
