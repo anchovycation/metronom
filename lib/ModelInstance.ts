@@ -1,5 +1,5 @@
 import Model from './Model';
-import { safeWrite, getKeyValue } from './Utilities';
+import { safeWrite } from './Utilities';
 
 export interface DataInfo {
   redisKey: String,
@@ -9,7 +9,6 @@ interface ModelFields {
   _model: Model;
   _previousDataValues: any | Object;
   _dataInfo: DataInfo;
-  _changedValues: any | Object;
 }
 
 /**
@@ -37,20 +36,10 @@ class ModelInstance {
       _model: model,
       _previousDataValues: data,
       _dataInfo: dataInfo,
-      _changedValues: {},
     };
     Object.entries(data).forEach(([key, defaultValue]) => {
       this[key] = defaultValue;
     });
-    const handler =  {
-      set: (target: Object, key: string, value: any)=>{
-        this._Model._changedValues[`${key}`] = getKeyValue(key)(target);
-        target[key as keyof Object] = value;
-        return true;
-      }
-    }
-    let proxy: any  = new Proxy(this, handler);
-    return proxy;
   }
 
   /**
@@ -59,12 +48,7 @@ class ModelInstance {
   public async save(): Promise<void> {
     const { _Model, ...data } = this;
     const { redisClient, flexSchema, schema } = _Model._model;
-    const keys = Object.keys(_Model._changedValues);
-    const tempData: Object = {};
-    keys.forEach((key) => {
-      tempData[key as keyof Object] = data[key];
-    });
-    await safeWrite(tempData, _Model._dataInfo.redisKey, redisClient, schema, flexSchema);
+    await safeWrite(data, _Model._dataInfo.redisKey, redisClient, schema, flexSchema);
   }
 
   /**
