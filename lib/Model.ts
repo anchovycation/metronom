@@ -4,18 +4,18 @@ import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './Utilities';
 
-interface ModelOptions {
+export interface ModelOptions {
   keyUnique?: string,
   redisClientOptions?: RedisClientOptions,
   flexSchema?: boolean,
 }
 
-interface FilterFunction {
+export interface FilterFunction {
   /* eslint-disable-next-line */
   (value: ModelInstance, index: number, array: ModelInstance[]): boolean
 }
 
-interface FilterOptions {
+export interface FilterOptions {
   limit?: number,
 }
 
