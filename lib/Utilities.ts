@@ -85,7 +85,8 @@ export const safeWrite = async (
 ): Promise<Object> => {
   if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
     const temp: { [key: string]: any } = {};
-    Object.entries(schema).forEach(([key, value]) => { // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
+    Object.entries(schema).forEach(([key, value]) => {
+      // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
       temp[key] = data[key] || value;
     });
     data = temp;

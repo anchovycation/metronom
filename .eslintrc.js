@@ -14,12 +14,13 @@ module.exports = {
   plugins: [
     '@typescript-eslint',
   ],
+  ignorePatterns: ['dist/**'],
   rules: {
     'no-underscore-dangle': 0,
     'import/extensions': 0,
     'import/no-unresolved': 0,
     'no-return-await': 0,
     'no-param-reassign': 0,
-    'implicit-arrow-linebreak': 0
+    'implicit-arrow-linebreak': 0,
   },
 };
