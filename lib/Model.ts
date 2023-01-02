@@ -59,7 +59,11 @@ class Model {
   constructor(schema: Object, keyPrefix = 'object', modelOption?: ModelOptions) {
     this.schema = schema;
     this.keyPrefix = keyPrefix;
-    this.flexSchema = modelOption?.flexSchema;
+    this.flexSchema = modelOption?.flexSchema ? modelOption?.flexSchema : false;
+
+    if (!this.flexSchema && Object.keys(schema).length === 0) {
+      throw new Error('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
+    }
 
     if (!modelOption?.keyUnique) {
       this.keyUnique = undefined;

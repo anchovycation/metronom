@@ -20,6 +20,15 @@ describe('Model.constructor()', () => {
       expect(error.message).toBe('createdAt keyUnique must be in to schema!');
     }
   });
+  test('client should get error when pass empty schema to not flex model', () => {
+    try {
+      new Model({},'users',{
+        flexSchema: false,
+      });
+    } catch (error) {
+      expect(error.message).toBe('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
+    }
+  });
 });
 
 describe('model.create()', () => {
