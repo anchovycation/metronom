@@ -1,2 +1,7 @@
 import Model from './lib/Model';
-export = Model;
+import Metronom from './lib/Metronom';
+
+export = {
+  Model,
+  Metronom,
+};

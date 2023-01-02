@@ -4,18 +4,18 @@ import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './Utilities';
 
-interface ModelOptions {
+export interface ModelOptions {
   keyUnique?: string,
   redisClientOptions?: RedisClientOptions,
   flexSchema?: boolean,
 }
 
-interface FilterFunction {
+export interface FilterFunction {
   /* eslint-disable-next-line */
   (value: ModelInstance, index: number, array: ModelInstance[]): boolean
 }
 
-interface FilterOptions {
+export interface FilterOptions {
   limit?: number,
 }
 
@@ -48,11 +48,13 @@ class Model {
    * Represents a Metronom ORM Model
    * @constructor
    * @param {Object} schema - Record's key-value schema
-   * @param {string} keyPrefix - Record unique key's prefix. `"users:1234"` --> "`keyPrefix`:`keyUnique`"
+   * @param {string} keyPrefix - Record unique key's prefix.
+   * `"users:1234"` --> "`keyPrefix`:`keyUnique`"
    * @param {ModelOptions} modelOption - Optional model settings. It's include 3 key.
    *   + `keyUnique`: it's unique part of model key
    *   + `flexSchema`: Normally, you can't define any key except the fields in `schema`,
-   *                   but if this value is `true`, you can only add a value to the schema by giving it `keyUnique`
+   *                   but if this value is `true`, you can only add a value to the schema
+   * by giving it `keyUnique`
    *   + `redisClientOptions`: node-redis client options.
    * @returns {Model} new record of Model
    */
@@ -119,7 +121,6 @@ class Model {
     if (!redisKey.toString().startsWith(`${this.keyPrefix}:`)) {
       redisKey = `${this.keyPrefix}:${redisKey}`;
     }
-
     return await safeWrite(data, redisKey, this.redisClient, this.schema, this.flexSchema);
   }
 
@@ -164,6 +165,7 @@ class Model {
       keys = keys.slice(0, options.limit);
     }
     const results: any[] = [];
+    // eslint-disable-next-line no-restricted-syntax
     for await (const key of keys) {
       const response = await this._read(key);
       results.push(this.createInstance(response, { redisKey: key }));
@@ -173,7 +175,8 @@ class Model {
 
   /**
    * Filters in the same way as `Array.filter`, pulling all records with the same `keyPrefix` value
-   * @param filterFunction - It takes the values `(value, index, array)` and returns `true` then the record is filtered. It can be asynchronous function
+   * @param filterFunction - It takes the values `(value, index, array)` and returns `true`
+   * then the record is filtered. It can be asynchronous function
    * @returns Filtred ModelInstances or empty array
    */
   public async filter(filterFunction: FilterFunction): Promise<Array<ModelInstance> | []> {
@@ -223,7 +226,8 @@ class Model {
   }
 
   /**
-   * Generate full redis key. if model has a `keyUnique` use it from `data` else generate random unique
+   * Generate full redis key. if model has a `keyUnique` use it
+   * from `data` else generate random unique
    * @param data - ModelInstance data
    */
   private generateRedisKey(data: Object): string {

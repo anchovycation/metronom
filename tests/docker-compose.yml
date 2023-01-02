@@ -6,3 +6,9 @@ services:
     ports:
       - '6379:6379'
     command: redis-server
+  redis-second:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6380:6380'
+    command: redis-server --port 6380

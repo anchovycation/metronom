@@ -1,6 +1,6 @@
 {
   "name": "metronom",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "description": "Easy to use Redis ORM based on node-redis",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,11 +23,11 @@
   "scripts": {
     "watch": "tsc --watch -p ./tsconfig.json",
     "build": "tsc",
-    "test:unit": "jest ./tests/unit --verbose --forceExit",
-    "test": "npm run build && docker-compose -f ./tests/docker-compose.yml up -d --build && npm run test:unit",
-    "lint": "eslint --ext .ts ./lib",
+    "test:unit": "npm run build && jest ./tests/unit --verbose --forceExit",
+    "test": "docker-compose -f ./tests/docker-compose.yml up -d && npm run test:unit --detectOpenHandles ; cd tests && docker compose down",
+    "lint": "eslint --ext .ts .",
     "lint:fix": "npm run lint -- --fix",
-    "doc": "typedoc lib/Model*.ts"
+    "doc": "typedoc lib/*.ts"
   },
   "dependencies": {
     "redis": "^4.0.3"

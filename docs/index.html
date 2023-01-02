@@ -10,26 +10,153 @@
 <div class="col-8 col-content">
 <div class="tsd-page-title">
 <h2> metronom</h2></div>
-<div class="tsd-panel tsd-typography">
-<a href="#metronom" id="metronom" style="color: inherit; text-decoration: none;">
-  <h1>metronom</h1>
-</a>
-<p>Easy to use Redis ORM based on <a href="https://www.npmjs.com/package/redis">node-redis</a></p>
+<div class="tsd-panel tsd-typography"><h1 align="center">
+  <img/ width="280" src="images/metronom.svg" alt="metronom logo"> <br>
+  <a href="https://anchovycation.github.io/metronom/">metronom</a>
+</h1>
+
+<h6 align="center">
+
+<p><a href="https://www.npmjs.com/package/metronom"><img src="https://badgen.net/npm/v/metronom" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/metronom"><img src="https://badgen.net/npm/dt/metronom" alt="download"></a>
+<a href="https://github.com/anchovycation/metronom"><img src="https://badgen.net/github/merged-prs/anchovycation/metronom" alt="merged prs"></a>
+<a href="https://github.com/anchovycation/metronom"><img src="https://badgen.net/github/last-commit/anchovycation/metronom/main" alt="last commit"></a>
+<a href="https://github.com/anchovycation/metronom"><img src="https://badgen.net/npm/types/metronom" alt="types"></a>
+<a href="https://www.npmjs.com/package/metronom"><img src="https://badgen.net/npm/license/metronom" alt="license"></a></p>
+</h6>
+
+<p>Metronom is user friendly Redis ORM based on  <a href="https://github.com/redis/node-redis">node-redis</a></p>
+<p>You can  <strong>save</strong>,  <strong>read</strong>,  <strong>update</strong>,  <strong>filter</strong>,  <strong>delete</strong>  and  <strong>bulk</strong>  operations JavaScript objects in Redis  <strong>without needing to know Redis commands</strong>.</p>
+<p>It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript.</p>
+<pre><code class="language-js"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">Model</span><span class="hl-1"> = </span><span class="hl-3">require</span><span class="hl-1">(</span><span class="hl-4">&#39;metronom&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">userModel</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">Model</span><span class="hl-1">(</span><br/><span class="hl-1">  {</span><br/><span class="hl-1">    </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-4">&#39;&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">surname:</span><span class="hl-1"> </span><span class="hl-4">&#39;&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">age:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">isAdmin:</span><span class="hl-1"> </span><span class="hl-0">false</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-4">&#39;users&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  { </span><span class="hl-5">keyUnique:</span><span class="hl-1"> </span><span class="hl-4">&#39;name&#39;</span><span class="hl-1"> }</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">create</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-4">&#39;Chandler&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">surname:</span><span class="hl-1"> </span><span class="hl-4">&#39;Bing&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-5">age:</span><span class="hl-1"> </span><span class="hl-6">18</span><span class="hl-1">,</span><br/><span class="hl-1">});</span><br/><span class="hl-8">// Redis key - &#39;users:Chandler&#39;</span><br/><span class="hl-8">// {</span><br/><span class="hl-8">//  name: &#39;Chandler&#39;,</span><br/><span class="hl-8">//  surname: &#39;Bing&#39;,</span><br/><span class="hl-8">//  age: 18,</span><br/><span class="hl-8">//  isAdmin: false</span><br/><span class="hl-8">// }</span><br/><br/><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">isAdmin</span><span class="hl-1"> = </span><span class="hl-0">true</span><span class="hl-1">;</span><br/><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">save</span><span class="hl-1">();</span><br/><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">admin</span><span class="hl-1"> = </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">findById</span><span class="hl-1">(</span><span class="hl-4">&#39;Chandler&#39;</span><span class="hl-1">);</span><br/><span class="hl-8">// {</span><br/><span class="hl-8">//  name: &#39;Chandler&#39;,</span><br/><span class="hl-8">//  surname: &#39;Bing&#39;,</span><br/><span class="hl-8">//  age: 18,</span><br/><span class="hl-8">//  isAdmin: true</span><br/><span class="hl-8">// }</span><br/><br/><span class="hl-8">// del users:Chandler</span><br/><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">admin</span><span class="hl-1">.</span><span class="hl-3">destroy</span><span class="hl-1">();</span>
+</code></pre>
+<p><strong>Source Code</strong>:  <a href="https://github.com/anchovycation/metronom">anchovycation/metronom</a><br><strong>NPM Package</strong>:  <a href="https://www.npmjs.com/package/metronom">https://www.npmjs.com/package/metronom</a></p>
 
 <a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
   <h2>Installation</h2>
 </a>
-<pre><code class="language-bash"><span class="hl-0">npm install metronom</span>
+<pre><code class="language-bash"><span class="hl-1">npm install metronom</span>
 </code></pre>
 
-<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-  <h2>Usage</h2>
+<a href="#commands" id="commands" style="color: inherit; text-decoration: none;">
+  <h2>Commands</h2>
 </a>
 
-<a href="#basic-example" id="basic-example" style="color: inherit; text-decoration: none;">
-  <h3>Basic Example</h3>
+<a href="#model-basics" id="model-basics" style="color: inherit; text-decoration: none;">
+  <h3>Model Basics</h3>
 </a>
-<pre><code class="language-js"><span class="hl-1">const</span><span class="hl-0"> </span><span class="hl-2">Model</span><span class="hl-0"> = </span><span class="hl-3">require</span><span class="hl-0">(</span><span class="hl-4">&#39;metronom&#39;</span><span class="hl-0">);</span><br/><br/><span class="hl-5">// create user model</span><br/><span class="hl-5">// new Model(&lt;model-schema&gt;, &lt;redis-key-prefix&gt;, &lt;model-options&gt;)</span><br/><span class="hl-1">const</span><span class="hl-0"> </span><span class="hl-2">modelSchema</span><span class="hl-0"> = { </span><span class="hl-5">// key: defaultValue </span><br/><span class="hl-0">  </span><span class="hl-6">id:</span><span class="hl-0"> </span><span class="hl-7">0</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-6">name:</span><span class="hl-0"> </span><span class="hl-4">&#39;&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-6">age:</span><span class="hl-0"> </span><span class="hl-7">1</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-6">job:</span><span class="hl-0"> {</span><br/><span class="hl-0">    </span><span class="hl-6">name:</span><span class="hl-0"> </span><span class="hl-4">&#39;teacher&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-6">room:</span><span class="hl-0"> </span><span class="hl-7">12</span><span class="hl-0">,</span><br/><span class="hl-0">    </span><span class="hl-6">isManeger:</span><span class="hl-0"> </span><span class="hl-1">false</span><br/><span class="hl-0">  },</span><br/><span class="hl-0">  </span><span class="hl-6">tags:</span><span class="hl-0"> [</span><span class="hl-4">&#39;teacher&#39;</span><span class="hl-0">, </span><span class="hl-4">&#39;highschool&#39;</span><span class="hl-0">, </span><span class="hl-4">&#39;math&#39;</span><span class="hl-0">]</span><br/><span class="hl-0">},</span><br/><br/><span class="hl-2">const</span><span class="hl-0"> keyPrefix = </span><span class="hl-4">&#39;users&#39;</span><span class="hl-0">;  </span><span class="hl-5">// default &#39;object&#39;</span><br/><span class="hl-1">const</span><span class="hl-0"> </span><span class="hl-2">modelOptions</span><span class="hl-0"> = {</span><br/><span class="hl-0">  </span><span class="hl-6">keyUnique:</span><span class="hl-0"> </span><span class="hl-4">&#39;name&#39;</span><span class="hl-0">, </span><span class="hl-5">// this value must be in to the schema because metronom use it to create redis key like &quot;users:12&quot;. Default value is object&#39;s created time </span><br/><span class="hl-0">  </span><span class="hl-6">redisClientOptions:</span><span class="hl-0"> { </span><span class="hl-5">/* node-redis configration */</span><span class="hl-0"> }</span><br/><span class="hl-0">  </span><span class="hl-6">flexSchema</span><span class="hl-0">: </span><span class="hl-1">false</span><span class="hl-0"> </span><span class="hl-5">// if this value is true you cannot save a field outside the schema. Dafault value is false</span><br/><span class="hl-0">}</span><br/><br/><span class="hl-5">// const userModel = new Model(modelSchema);</span><br/><span class="hl-5">// const userModel = new Model(modelSchema, keyPrefix);</span><br/><span class="hl-1">const</span><span class="hl-0"> </span><span class="hl-2">userModel</span><span class="hl-0"> = </span><span class="hl-1">new</span><span class="hl-0"> </span><span class="hl-3">Model</span><span class="hl-0">(</span><span class="hl-6">modelSchema</span><span class="hl-0">, </span><span class="hl-6">keyPrefix</span><span class="hl-0">, </span><span class="hl-6">modelOptions</span><span class="hl-0">);</span><br/><br/><span class="hl-1">const</span><span class="hl-0"> </span><span class="hl-2">alice</span><span class="hl-0"> = </span><span class="hl-8">await</span><span class="hl-0"> </span><span class="hl-6">userModel</span><span class="hl-0">.</span><span class="hl-3">create</span><span class="hl-0">({</span><br/><span class="hl-0">  </span><span class="hl-6">name:</span><span class="hl-0"> </span><span class="hl-4">&#39;alice&#39;</span><span class="hl-0">,</span><br/><span class="hl-0">  </span><span class="hl-6">age:</span><span class="hl-0"> </span><span class="hl-7">35</span><br/><span class="hl-0">);</span><br/><br/><span class="hl-6">alice</span><span class="hl-0">.</span><span class="hl-6">age</span><span class="hl-0"> = </span><span class="hl-7">36</span><span class="hl-0">;</span><br/><span class="hl-8">await</span><span class="hl-0"> </span><span class="hl-6">alice</span><span class="hl-0">.</span><span class="hl-3">save</span><span class="hl-0">();</span><br/><br/><span class="hl-6">const</span><span class="hl-0"> </span><span class="hl-6">response</span><span class="hl-0"> = </span><span class="hl-8">await</span><span class="hl-0"> </span><span class="hl-6">userModel</span><span class="hl-0">.</span><span class="hl-3">findById</span><span class="hl-0">(</span><span class="hl-4">&#39;alice&#39;</span><span class="hl-0">);</span><br/><span class="hl-6">console</span><span class="hl-0">.</span><span class="hl-3">log</span><span class="hl-0">(</span><span class="hl-6">response</span><span class="hl-0">);</span><br/><span class="hl-5">// {</span><br/><span class="hl-5">//     name: &#39;alice&#39;,</span><br/><span class="hl-5">//     age: 36,</span><br/><span class="hl-5">//     job: {</span><br/><span class="hl-5">//         name: &#39;teacher&#39;,</span><br/><span class="hl-5">//         room: 205,</span><br/><span class="hl-5">//         isManeger: true</span><br/><span class="hl-5">//     },</span><br/><span class="hl-5">//     tags:[&#39;teacher&#39;, &#39;highschool&#39;, &#39;music&#39;] </span><br/><span class="hl-5">// }</span><br/><br/><span class="hl-8">await</span><span class="hl-0"> </span><span class="hl-6">userModel</span><span class="hl-0">.</span><span class="hl-3">deleteById</span><span class="hl-0">(</span><span class="hl-4">&#39;alice&#39;</span><span class="hl-0">);</span><br/><span class="hl-5">// 1</span>
+<p>Represents the Redis object you created in your database. You can create, read, update, delete, filter operations. It also includes system information.</p>
+<pre><code class="language-js"><span class="hl-8">// create user model</span><br/><span class="hl-8">// new Model(&lt;model-schema&gt;, &lt;redis-key-prefix&gt;, &lt;model-options&gt;)</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">userModel</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">Model</span><span class="hl-1">(</span><br/><span class="hl-1">  {</span><br/><span class="hl-1">    </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-4">&#39;John&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">surname:</span><span class="hl-1"> </span><span class="hl-4">&#39;Doe&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">age:</span><span class="hl-1"> </span><span class="hl-6">1</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-5">isAdmin:</span><span class="hl-1"> </span><span class="hl-0">false</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-4">&#39;users&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  { </span><span class="hl-5">keyUnique:</span><span class="hl-1"> </span><span class="hl-4">&#39;name&#39;</span><span class="hl-1"> }</span><br/><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#create-methods" id="create-methods" style="color: inherit; text-decoration: none;">
+  <h3>CREATE Methods</h3>
+</a>
+
+<a href="#create" id="create" style="color: inherit; text-decoration: none;">
+  <h4><code>create</code></h4>
+</a>
+<p>Creates <code>ModelInstance</code> by parameter then saves it to Redis and returns it.</p>
+<pre><code class="language-js"><span class="hl-8">// create user</span><br/><span class="hl-8">// create(&lt;value-object&gt;)</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">create</span><span class="hl-1">({ </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-4">&quot;Beyza&quot;</span><span class="hl-1">, </span><span class="hl-5">surname:</span><span class="hl-1"> </span><span class="hl-4">&quot;Erkan&quot;</span><span class="hl-1"> });</span><br/><span class="hl-8">// { </span><br/><span class="hl-8">//   firstName: &quot;Beyza&quot;,</span><br/><span class="hl-8">//   lastName: &quot;Erkan&quot;,</span><br/><span class="hl-8">//   age: 1,</span><br/><span class="hl-8">//   isAdmin: false,</span><br/><span class="hl-8">//   _Model: {</span><br/><span class="hl-8">//     _model: Model,</span><br/><span class="hl-8">//     _dataInfo: {</span><br/><span class="hl-8">//       redisKey: &#39;users:Beyza&#39;</span><br/><span class="hl-8">//     }</span><br/><span class="hl-8">//   }</span><br/><span class="hl-8">// }</span><br/>
+</code></pre>
+
+<a href="#read-methods" id="read-methods" style="color: inherit; text-decoration: none;">
+  <h3>READ Methods</h3>
+</a>
+
+<a href="#findbyid" id="findbyid" style="color: inherit; text-decoration: none;">
+  <h4><code>findById</code></h4>
+</a>
+<p>Fetches record by  <code>keyUnique</code> . Returns ModelInstance or null.</p>
+<pre><code class="language-js"><span class="hl-8">// find user with id</span><br/><span class="hl-8">// findById(&lt;id&gt;)</span><br/><span class="hl-5">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">findById</span><span class="hl-1">(</span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">name</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">user:</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">getPureData</span><span class="hl-1">() });</span>
+</code></pre>
+
+<a href="#getall" id="getall" style="color: inherit; text-decoration: none;">
+  <h4><code>getAll</code></h4>
+</a>
+<p>Fetches all records with the same  <code>keyPrefix</code>  value. Returns list of ModelInstance.</p>
+<pre><code class="language-js"><span class="hl-8">// find all users</span><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">users</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">getAll</span><span class="hl-1">();</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">users</span><span class="hl-1"> });</span>
+</code></pre>
+
+<a href="#filter" id="filter" style="color: inherit; text-decoration: none;">
+  <h4><code>filter</code></h4>
+</a>
+<p>Filters in the same way as  <code>Array.filter</code>, pulling all records with the same  <code>keyPrefix</code>  value. Returns filtred ModelInstances or empty array.</p>
+<pre><code class="language-js"><span class="hl-8">// filters users by condition</span><br/><span class="hl-8">// filter(filter-function)</span><br/><span class="hl-8">// filter function takes the values  (value, index, array) and returns  `true`  then the record is filtered. It can be asynchronous function</span><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">users</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1">  </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">filter</span><span class="hl-1">((</span><span class="hl-5">user</span><span class="hl-1">) </span><span class="hl-0">=&gt;</span><span class="hl-1">  </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">age</span><span class="hl-1"> &gt; </span><span class="hl-6">18</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">users</span><span class="hl-1"> })</span>
+</code></pre>
+
+<a href="#delete-methods" id="delete-methods" style="color: inherit; text-decoration: none;">
+  <h3>DELETE Methods</h3>
+</a>
+
+<a href="#deletebyid" id="deletebyid" style="color: inherit; text-decoration: none;">
+  <h4><code>deleteById</code></h4>
+</a>
+<p>Delete record by <code>keyUnique</code>.  Returns deleted records count it always &#39;1&#39; if it succesfull.</p>
+<pre><code class="language-js"><span class="hl-8">// delete user with id</span><br/><span class="hl-8">// deleteById(&lt;id&gt;)</span><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">isDeleted</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">deleteById</span><span class="hl-1">(</span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">name</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">isDeleted</span><span class="hl-1"> });</span>
+</code></pre>
+
+<a href="#deleteall" id="deleteall" style="color: inherit; text-decoration: none;">
+  <h4><code>deleteAll</code></h4>
+</a>
+<p>Delete all records with the same  <code>keyPrefix</code>  value. Returns deleted records count or 0.</p>
+<pre><code class="language-js"><span class="hl-8">// delete all users</span><br/><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">deleteAll</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#other-methods" id="other-methods" style="color: inherit; text-decoration: none;">
+  <h3>Other Methods</h3>
+</a>
+
+<a href="#runcommand" id="runcommand" style="color: inherit; text-decoration: none;">
+  <h4><code>runCommand</code></h4>
+</a>
+<p>Redis command executer.</p>
+<pre><code class="language-js"><span class="hl-8">// runCommand(&lt;commands&gt;)</span><br/><span class="hl-3">runCommand</span><span class="hl-1">([</span><span class="hl-4">&#39;hget&#39;</span><span class="hl-1">, </span><span class="hl-4">&#39;user:1234&#39;</span><span class="hl-1">, </span><span class="hl-4">&#39;name&#39;</span><span class="hl-1">])</span>
+</code></pre>
+
+<a href="#modelinstance-basics" id="modelinstance-basics" style="color: inherit; text-decoration: none;">
+  <h2>ModelInstance Basics</h2>
+</a>
+<p>It is the object from the Redis. You can directly process on the record then save or destroy it.</p>
+
+<a href="#update-methods" id="update-methods" style="color: inherit; text-decoration: none;">
+  <h3>UPDATE Methods</h3>
+</a>
+
+<a href="#save" id="save" style="color: inherit; text-decoration: none;">
+  <h4><code>save</code></h4>
+</a>
+<p>Saves the current state of the object to Redis.</p>
+<pre><code class="language-js"><span class="hl-8">// update user and save</span><br/><span class="hl-0">let</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">create</span><span class="hl-1">({ </span><span class="hl-5">name:</span><span class="hl-1"> </span><span class="hl-4">&quot;Beyza&quot;</span><span class="hl-1">, </span><span class="hl-5">surname:</span><span class="hl-1"> </span><span class="hl-4">&quot;Erkan&quot;</span><span class="hl-1"> });</span><br/><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">age</span><span class="hl-1"> = </span><span class="hl-6">20</span><span class="hl-1">;</span><br/><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">save</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#delete-methods-1" id="delete-methods-1" style="color: inherit; text-decoration: none;">
+  <h3>DELETE Methods</h3>
+</a>
+
+<a href="#destroy" id="destroy" style="color: inherit; text-decoration: none;">
+  <h4><code>destroy</code></h4>
+</a>
+<p>Destroy the object from Redis. Returns true or false that it has been deleted.</p>
+<pre><code class="language-js"><span class="hl-8">// destroy this user object</span><br/><span class="hl-7">await</span><span class="hl-1">  </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">destroy</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#other-methods-1" id="other-methods-1" style="color: inherit; text-decoration: none;">
+  <h3>OTHER Methods</h3>
+</a>
+
+<a href="#getpuredata" id="getpuredata" style="color: inherit; text-decoration: none;">
+  <h4><code>getPureData</code></h4>
+</a>
+<p>Clears all metronom-related data within the object and restores it to its raw state. Returns raw data.</p>
+<pre><code class="language-js"><span class="hl-8">// get raw data of user</span><br/><span class="hl-5">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1">  </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">findById</span><span class="hl-1">(</span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">name</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">user:</span><span class="hl-1">  </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">getPureData</span><span class="hl-1">() });</span>
+</code></pre>
+
+<a href="#tojson" id="tojson" style="color: inherit; text-decoration: none;">
+  <h4><code>toJSON</code></h4>
+</a>
+<p>Converts the object to JSON. Returns stringified object.</p>
+<pre><code class="language-js"><span class="hl-8">// convert the user object to JSON</span><br/><span class="hl-5">user</span><span class="hl-1"> = </span><span class="hl-7">await</span><span class="hl-1">  </span><span class="hl-5">userModel</span><span class="hl-1">.</span><span class="hl-3">findById</span><span class="hl-1">(</span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-5">name</span><span class="hl-1">);</span><br/><span class="hl-5">console</span><span class="hl-1">.</span><span class="hl-3">log</span><span class="hl-1">({ </span><span class="hl-5">user:</span><span class="hl-1"> </span><span class="hl-5">user</span><span class="hl-1">.</span><span class="hl-3">toJSON</span><span class="hl-1">() });</span>
 </code></pre>
 
 <a href="#contributors" id="contributors" style="color: inherit; text-decoration: none;">
@@ -66,8 +193,10 @@
 <ul>
 <li class="current selected"><a href="modules.html">metronom</a>
 <ul>
+<li class="tsd-kind-module"><a href="modules/Metronom.html">Metronom</a></li>
 <li class="tsd-kind-module"><a href="modules/Model.html">Model</a></li>
-<li class="tsd-kind-module"><a href="modules/ModelInstance.html">Model<wbr/>Instance</a></li></ul></li></ul></div></details></nav></div></div>
+<li class="tsd-kind-module"><a href="modules/ModelInstance.html">Model<wbr/>Instance</a></li>
+<li class="tsd-kind-module"><a href="modules/Utilities.html">Utilities</a></li></ul></li></ul></div></details></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div><script src="assets/main.js"></script></body></html>
