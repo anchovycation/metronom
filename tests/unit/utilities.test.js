@@ -1,3 +1,4 @@
+const { expect, describe, test } = require('@jest/globals');
 const { isObject, getKeyValue } = require('../../dist/lib/Utilities');
 
 describe('isObject()', () => {
