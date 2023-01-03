@@ -24,7 +24,7 @@
     "watch": "tsc --watch -p ./tsconfig.json",
     "build": "tsc",
     "test:unit": "npm run build && jest ./tests/unit --verbose --forceExit",
-    "test": "docker-compose -f ./tests/docker-compose.yml up -d && npm run test:unit --detectOpenHandles ; cd tests && docker compose down",
+    "test": "docker-compose -f ./tests/docker-compose.yml up -d && npm run test:unit --detectOpenHandles #; cd tests && docker compose down",
     "lint": "eslint --ext .ts .",
     "lint:fix": "npm run lint -- --fix",
     "doc": "typedoc lib/*.ts"

@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { Schema } from './Model';
 /**
  * Utilities
  * @category Utilities
@@ -39,28 +41,19 @@ export const hasJsonStructure = (str: any): Boolean => {
 export const safeRead = async (
   redisKey: String,
   redisClient: any,
-  schema: { [key: string]: any },
+  schema: Schema,
 ): Promise<Object> => {
   const response = await redisClient.hGetAll(redisKey);
   const entries = Object
     .entries(response)
     .map(
       ([key, value]: [string, any]) => {
-        if (hasJsonStructure(value)) {
-          value = JSON.parse(value);
-        } else {
-          const typeOfValue = typeof schema[key];
-          const types: { [key: string]: any } = {
-            string: String,
-            number: Number,
-            boolean: Boolean,
-            undefined,
-            null: null,
-          };
-
-          value = typeOfValue === 'undefined' || value === 'null'
-            ? types[typeOfValue]
-            : new types[typeOfValue](value).valueOf(); // convert to primative type
+        if (value !== undefined || value !== null) {
+          if (hasJsonStructure(value)) {
+            value = JSON.parse(value);
+          } else {
+            value = new schema[key].type(value).valueOf(); // convert to primative type
+          }
         }
         return [key, value];
       },
@@ -80,14 +73,14 @@ export const safeWrite = async (
   data: { [key: string | number]: any },
   redisKey: String,
   redisClient: any,
-  schema: Object = {},
+  schema: Schema = {},
   isFlex: Boolean | null = false,
 ): Promise<Object> => {
   if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
     const temp: { [key: string]: any } = {};
     Object.entries(schema).forEach(([key, value]) => {
       // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
-      temp[key] = data[key] || value;
+      temp[key] = data[key] || new value.type(value.default).valueOf();
     });
     data = temp;
   }

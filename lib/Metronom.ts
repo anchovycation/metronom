@@ -1,5 +1,5 @@
 import { RedisClientOptions } from 'redis';
-import Model, { ModelOptions } from './Model';
+import Model, { ModelOptions, Schema } from './Model';
 
 /**
  * Metronom model creator
@@ -23,7 +23,7 @@ class Metronom {
   /**
    * Create metronom model from this Metronom object
    *
-   * @param {Object} schema - Record's key-value schema
+   * @param {Schema} schema - Record's key-value schema
    * @param {string} keyPrefix - Record unique key's prefix.
    * `"users:1234"` --> "`keyPrefix`:`keyUnique`"
    * @param {ModelOptions} modelOption - Optional model settings. It's include 3 key.
@@ -34,7 +34,7 @@ class Metronom {
    *   + `redisClientOptions`: node-redis client options.
    * @returns {Model} new record of Model
    */
-  public define(schema: Object, keyPrefix: string = 'object', modelOptions?: ModelOptions): Model {
+  public define(schema: Schema, keyPrefix: string = 'object', modelOptions?: ModelOptions): Model {
     const redisOption = this.redisClientOptions
       ? this.redisClientOptions
       : modelOptions?.redisClientOptions;

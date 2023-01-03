@@ -3,6 +3,14 @@ import ModelInstance, { DataInfo } from './ModelInstance';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './Utilities';
+import { Types } from './Constants';
+
+export interface Schema {
+  [index: string]: {
+    type: any,
+    default?: unknown,
+  }
+}
 
 export interface ModelOptions {
   keyUnique?: string,
@@ -35,7 +43,7 @@ class Model {
   public keyUnique: String | undefined;
 
   /** Object struct model */
-  public schema: Object;
+  public schema: Schema;
 
   public redisClient: RedisClientType<any, any>;
 
@@ -47,7 +55,7 @@ class Model {
   /**
    * Represents a Metronom ORM Model
    * @constructor
-   * @param {Object} schema - Record's key-value schema
+   * @param {Schema} schema - Record's key-value schema
    * @param {string} keyPrefix - Record unique key's prefix.
    * `"users:1234"` --> "`keyPrefix`:`keyUnique`"
    * @param {ModelOptions} modelOption - Optional model settings. It's include 3 key.
@@ -58,13 +66,24 @@ class Model {
    *   + `redisClientOptions`: node-redis client options.
    * @returns {Model} new record of Model
    */
-  constructor(schema: Object, keyPrefix = 'object', modelOption?: ModelOptions) {
+  constructor(schema: Schema, keyPrefix:string = 'object', modelOption?: ModelOptions) {
     this.schema = schema;
     this.keyPrefix = keyPrefix;
     this.flexSchema = modelOption?.flexSchema ? modelOption?.flexSchema : false;
 
-    if (!this.flexSchema && Object.keys(schema).length === 0) {
-      throw new Error('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
+    if (!this.flexSchema) {
+      if (Object.keys(schema).length === 0) {
+        throw new Error('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
+      }
+
+      Object.entries(schema).forEach(([key, value]) => {
+        if (!value.type) {
+          throw new Error(`"${key}" key must have to "type" property in the schema!`);
+        }
+        if (typeof value.type !== 'function') {
+          throw new Error(`"schema.${key}.type" must be constructor! You send "${value.type}"`);
+        }
+      });
     }
 
     if (!modelOption?.keyUnique) {
@@ -92,6 +111,8 @@ class Model {
    * @returns {ModelInstance} new ModelInstance
    */
   public async create(valueObject: Object): Promise<ModelInstance> {
+    console.log({valueObject: valueObject.toString()});
+
     if (!isObject(valueObject)) {
       throw new Error('Value must be object!');
     }
