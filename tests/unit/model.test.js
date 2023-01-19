@@ -140,7 +140,7 @@ describe('model.create()', () => {
       {
         id: {
           type: Types.Number,
-          default:0,
+          default: 0,
         },
         info: {
           type: Types.Object,
@@ -158,6 +158,27 @@ describe('model.create()', () => {
       id: Date.now(),
     });
     expect(user.info.contact.tel).toBe(123);
+  });
+  test('client should create successfully when default value was null and undefined', async () => {
+    const userModel2 = new Model(
+      {
+        name: {
+          type: Types.String,
+          default: null,
+        },
+      },
+      'users');
+    const user = await userModel2.create({});
+    const u2 = new Model(
+      {
+        name: {
+          type: Types.String,
+          default: undefined,
+        },
+      },
+      'users');
+    const user2 = await u2.create({});
+    expect(user.name === null && user2.name === undefined).toBe(true);
   });
 });
 
