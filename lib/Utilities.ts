@@ -1,4 +1,5 @@
-// @ts-nocheck
+/* eslint-disable eqeqeq */
+import { Types } from './Constants';
 import { Schema } from './Model';
 /**
  * Utilities
@@ -77,16 +78,21 @@ export const safeWrite = async (
   isFlex: Boolean | null = false,
 ): Promise<Object> => {
   if (!isFlex) { // if isFlex is falsy, you can only save fields inside the schema
-    const temp: { [key: string]: any } = {};
+    const temp: { [key: string]: any } = JSON.parse(JSON.stringify(data));
+    data = {};
+
     Object.entries(schema).forEach(([key, value]) => {
       // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
-      temp[key] = data[key] || new value.type(value.default).valueOf();
+      data[key] = temp[key]
+      // @ts-ignore
+      || (value.type == Types.Array ? value.default : new value.type(value.default).valueOf());
     });
-    data = temp;
+    // data = temp;
   }
 
   const keysAndValues: [String, any][] = Object
     .entries(data)
     .map(([key, value]) => [key, typeof value === 'object' ? JSON.stringify(value) : value]); // include array, objects etc.
-  return await redisClient.hSet(redisKey, keysAndValues);
+  await redisClient.hSet(redisKey, keysAndValues);
+  return data;
 };

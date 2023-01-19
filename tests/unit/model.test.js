@@ -1,5 +1,4 @@
 const { expect, describe, test } = require('@jest/globals');
-const { Type } = require('@sinclair/typebox');
 const { Model, Types } = require('../../dist');
 
 const basicUserSchema = {
@@ -129,26 +128,34 @@ describe('model.create()', () => {
         type: Types.Number,
       },
       messages: {
-        type: Types.Array(String),
-        default: [],
+        type: Types.Array,
+        default: ['No message'],
       },
     }, 'users');
-    const user = await userModel2.create({ id, messages: ['m1', 'm2', 'm3'] });
-    expect(Array.isArray(user.messages)).toBe(true);
+    const user = await userModel2.create({ id });
+    expect(Array.isArray(user.messages) && user.messages[0] === 'No message').toBe(true);
   });
   test('client should create successfully when data has nested object', async () => {
     const userModel2 = new Model(
-      basicUserSchema,
+      {
+        id: {
+          type: Types.Number,
+          default:0,
+        },
+        info: {
+          type: Types.Object,
+          default: {
+            name: 'alihan',
+            surname: 'sarac',
+            contact: { tel: 123, email: 'asd' },
+          },
+        },
+      },
       'users',
       { keyUnique: 'id' },
     );
     const user = await userModel2.create({
       id: Date.now(),
-      info: {
-        name: 'alihan',
-        surname: 'sarac',
-        contact: { tel: 123, email: 'asd' },
-      },
     });
     expect(user.info.contact.tel).toBe(123);
   });
@@ -175,10 +182,14 @@ describe('model.findById()', () => {
   });
   test('client should objeleri düngün bir şekilde getirilmeli', async () => {
     const id = Date.now();
-    const userModel2 = new Model({ id: {
-      type: Types.Number,
-      default: 0,
-    }}, 'users', {
+    const userModel2 = new Model({
+      id: {
+        type: Types.Number,
+        default: 0,
+      },
+    },
+    'users',
+    {
       keyUnique: 'id',
       flexSchema: true,
     });

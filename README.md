@@ -14,24 +14,80 @@
 
 </h6>
 
-Metronom is user friendly Redis ORM based on  [node-redis](https://github.com/redis/node-redis)
+Metronom is user friendly Redis ORM based on  [node-redis](https://github.com/redis/node-redis) 
 
 You can  **save**,  **read**,  **update**,  **filter**,  **delete**  and  **bulk**  operations JavaScript objects in Redis  **without needing to know Redis commands**.
 
 It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript.
 
-```js
-const Model = require('metronom');
+## Let's start
+### 1. Install `metronom`
+Firstly, instal this package to your project via your package manager.
+**npm**:
+```bash
+npm i metronom
+```
+**yarn**:
+```bash
+yarn add metronom
+```
+### 2. Create `Metronom` object
+The `Metronom` object is create `Model` with your defined options like port, host, url or ttl. This step is not required but **recomended** because at the unnormal usage scenario(you need to use diffirent url from default redis ...) you must to pass that options to all `Model` defines otherwise `Metronom` object do it automaticly.
 
-const userModel = new Model(
+```js
+import { Metronom } from 'metronom';
+
+const metronom = new Metronom({
+  host: '172.168.1.123',
+  port: 1234
+});
+```
+
+### 3. Define `Model`
+`Model` is redis hash maper. It has two diffirent flow.
++ `flex`: you don't need to define schema. All hash keys dynamicly mapped
++ 'schema based': You define type, default value etc. in to the schema and metronom use it read/write operation. Keys not found in the schema are ignored.
+```js
+const userModel = metronom.define(
+// const userModel = new Model(
+  schema, redisKeyPrefix, modelOptions
+);
+```
+### 4. Use model's query inferface
+Now, you can use all metronom queries(`Metronom`, `Model` and `ModelInstance`) like `Model.create`, `Model.findById`, `Model.destroy`, `ModelInstance.save`, etc. .Start conding the project that will save the world
+
+**For example**:
+```js
+const { Metronom, Model, Types } = require('metronom');
+
+const metronom = new Metronom({
+  url: "redis://localhost:6380",
+  // redisClient options
+});
+
+const userModel = metronom.define(
+// const userModel = new Model(
   {
-    name: '',
-    surname: '',
-    age: 1,
-    isAdmin: false
+    name: {
+      type: Types.String,
+    },
+    surname: {
+      type: Types.String,
+    },
+    age: {
+      type: Types.Number,
+      default: 1
+    },
+    isAdmin: {
+      type: Types.Boolean,
+      dafeult: false,
+    }
   },
   'users',
-  { keyUnique: 'name' }
+  { 
+    keyUnique: 'name',
+    // set `flexSchema` to true and never define schema
+  }
 );
 
 let user = await userModel.create({
@@ -63,11 +119,6 @@ await admin.destroy();
 ```
 **Source Code**:  [anchovycation/metronom](https://github.com/anchovycation/metronom)  
 **NPM Package**:  [https://www.npmjs.com/package/metronom](https://www.npmjs.com/package/metronom)
-
-## Installation
-```bash
-npm install metronom
-```
 
 ## Commands
 

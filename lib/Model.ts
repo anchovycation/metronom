@@ -3,8 +3,20 @@ import ModelInstance, { DataInfo } from './ModelInstance';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './Utilities';
-import { Types } from './Constants';
 
+/**
+ * Schema of Metronom model
+ * @example
+ * ```
+ * import { Types } from 'metronom';
+ * const schema = {
+ *   isAdmin: {
+ *     type: Types.Boolean,
+ *     default: false,
+ *   }
+ * };
+ * ```
+ */
 export interface Schema {
   [index: string]: {
     type: any,
@@ -111,14 +123,12 @@ class Model {
    * @returns {ModelInstance} new ModelInstance
    */
   public async create(valueObject: Object): Promise<ModelInstance> {
-    console.log({valueObject: valueObject.toString()});
-
-    if (!isObject(valueObject)) {
-      throw new Error('Value must be object!');
+    if (!isObject(valueObject) && !Array.isArray(valueObject)) {
+      throw new Error(`Value must be object or array!. Your type is: ${typeof valueObject}`);
     }
-    if (Object.keys(valueObject).length === 0) {
-      throw new Error('Value can\'t be empty');
-    }
+    // if (Object.keys(valueObject).length === 0) {
+    //   throw new Error('Value can\'t be empty');
+    // }
 
     const redisKey = this.generateRedisKey(valueObject);
     const isExist = (await this.redisClient.keys(redisKey)).length > 0;
@@ -127,7 +137,9 @@ class Model {
       throw new Error(`"${redisKey}" already exist!`);
     }
 
-    await this._write(redisKey, valueObject);
+    // FIXME: şema bu fonksiyona gelen value'yu ezmeli ardından onu kullanıcıya geri dönmeliyiz.
+
+    valueObject = await this._write(redisKey, valueObject);
 
     return this.createInstance(valueObject, { redisKey });
   }
