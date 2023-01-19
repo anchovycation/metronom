@@ -22,5 +22,6 @@ module.exports = {
     'no-return-await': 0,
     'no-param-reassign': 0,
     'implicit-arrow-linebreak': 0,
+    'new-cap': 0,
   },
 };

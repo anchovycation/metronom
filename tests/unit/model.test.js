@@ -1,24 +1,41 @@
 const { expect, describe, test } = require('@jest/globals');
-const { Model } = require('../../dist');
+const { Model, Types } = require('../../dist');
+
+const basicUserSchema = {
+  id: {
+    type: Types.Number,
+    default: 0,
+  },
+  name: {
+    type: Types.String,
+  },
+  surname: {
+    type: Types.String,
+  },
+  age: {
+    type: Types.Number,
+    default: 1,
+  },
+};
 
 describe('Model.constructor()', () => {
   test('client should connect successfully', async () => {
-    const userModel = new Model({ name: '', surname: '', age: 1 }, 'users', {
+    const userModel = new Model(basicUserSchema, 'users', {
       keyUnique: 'age',
     });
     expect(await userModel.redisClient.echo('test')).toBe('test');
   });
   test('client should connect successfully without "modelOptions"', async () => {
-    const userModel = new Model({ name: '', surname: '', age: 1 }, 'users');
+    const userModel = new Model(basicUserSchema, 'users');
     expect(await userModel.redisClient.echo('test')).toBe('test');
   });
   test('client should create instance successfully when keyPrefix doesnt exist', () => {
-    const userModel = new Model({ name: '', surname: '', age: 1 });
+    const userModel = new Model(basicUserSchema);
     expect(userModel.keyPrefix).toBe('object');
   });
   test('client should get error when keyUnique doesnt exist in the schema', () => {
     try {
-      new Model({ name: '', surname: '', age: 1 }, 'users', {
+      new Model(basicUserSchema, 'users', {
         keyUnique: 'createdAt',
       });
     } catch (error) {
@@ -36,13 +53,27 @@ describe('Model.constructor()', () => {
       );
     }
   });
+  test('client should get error when type doesnt exist in the schema', () => {
+    try {
+      let schema = {
+        id: {
+          type: Types.Number,
+          default: 0,
+        },
+        name: {
+          default: 'asd',
+        },
+      };
+      new Model(schema);
+    } catch (error) {
+      expect(error.message).toBe('"name" key must have to "type" property in the schema!');
+    }
+  });
 });
 
 describe('model.create()', () => {
   const userModel = new Model(
-    {
-      id: 0, name: '', surname: '', age: 1,
-    },
+    basicUserSchema,
     'users',
     { keyUnique: 'id' },
   );
@@ -59,9 +90,7 @@ describe('model.create()', () => {
   test('client should create successfully without "keyUnique" option', async () => {
     const id = Date.now();
     const userModel2 = new Model(
-      {
-        id: 0, name: '', surname: '', age: 1,
-      },
+      basicUserSchema,
       'users',
     );
     const user = await userModel2.create({
@@ -93,35 +122,69 @@ describe('model.create()', () => {
   });
   test('client should create successfully when data has array', async () => {
     const id = Date.now();
-    const userModel2 = new Model({ id: 0, messages: [] }, 'users');
-    const user = await userModel2.create({ id, messages: ['m1', 'm2', 'm3'] });
-    expect(Array.isArray(user.messages)).toBe(true);
+    const userModel2 = new Model({
+      id: {
+        default: 0,
+        type: Types.Number,
+      },
+      messages: {
+        type: Types.Array,
+        default: ['No message'],
+      },
+    }, 'users');
+    const user = await userModel2.create({ id });
+    expect(Array.isArray(user.messages) && user.messages[0] === 'No message').toBe(true);
   });
   test('client should create successfully when data has nested object', async () => {
     const userModel2 = new Model(
       {
-        id: 0, name: '', surname: '', age: 1,
+        id: {
+          type: Types.Number,
+          default: 0,
+        },
+        info: {
+          type: Types.Object,
+          default: {
+            name: 'alihan',
+            surname: 'sarac',
+            contact: { tel: 123, email: 'asd' },
+          },
+        },
       },
       'users',
       { keyUnique: 'id' },
     );
     const user = await userModel2.create({
       id: Date.now(),
-      info: {
-        name: 'alihan',
-        surname: 'sarac',
-        contact: { tel: 123, email: 'asd' },
-      },
     });
     expect(user.info.contact.tel).toBe(123);
+  });
+  test('client should create successfully when default value was null and undefined', async () => {
+    const userModel2 = new Model(
+      {
+        name: {
+          type: Types.String,
+          default: null,
+        },
+      },
+      'users');
+    const user = await userModel2.create({});
+    const u2 = new Model(
+      {
+        name: {
+          type: Types.String,
+          default: undefined,
+        },
+      },
+      'users');
+    const user2 = await u2.create({});
+    expect(user.name === null && user2.name === undefined).toBe(true);
   });
 });
 
 describe('model.findById()', () => {
   const userModel = new Model(
-    {
-      id: 0, name: '', surname: '', age: 1,
-    },
+    basicUserSchema,
     'users',
     { keyUnique: 'id' },
   );
@@ -140,7 +203,14 @@ describe('model.findById()', () => {
   });
   test('client should objeleri düngün bir şekilde getirilmeli', async () => {
     const id = Date.now();
-    const userModel2 = new Model({ id: 0 }, 'users', {
+    const userModel2 = new Model({
+      id: {
+        type: Types.Number,
+        default: 0,
+      },
+    },
+    'users',
+    {
       keyUnique: 'id',
       flexSchema: true,
     });
@@ -159,9 +229,7 @@ describe('model.findById()', () => {
 
 describe('model.deleteById()', () => {
   const userModel = new Model(
-    {
-      id: 0, name: '', surname: '', age: 1,
-    },
+    basicUserSchema,
     'users',
     { keyUnique: 'id' },
   );
@@ -182,9 +250,7 @@ describe('model.deleteById()', () => {
 
 describe('model.deleteAll()', () => {
   const userModel = new Model(
-    {
-      id: 0, name: '', surname: '', age: 1,
-    },
+    basicUserSchema,
     'users',
     { keyUnique: 'id' },
   );
@@ -203,9 +269,7 @@ describe('model.deleteAll()', () => {
 
 describe('model.getAll()', () => {
   const userModel = new Model(
-    {
-      id: 0, name: '', surname: '', age: 1,
-    },
+    basicUserSchema,
     'users',
     { keyUnique: 'id' },
   );
