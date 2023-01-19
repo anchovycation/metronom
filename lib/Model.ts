@@ -126,9 +126,6 @@ class Model {
     if (!isObject(valueObject) && !Array.isArray(valueObject)) {
       throw new Error(`Value must be object or array!. Your type is: ${typeof valueObject}`);
     }
-    // if (Object.keys(valueObject).length === 0) {
-    //   throw new Error('Value can\'t be empty');
-    // }
 
     const redisKey = this.generateRedisKey(valueObject);
     const isExist = (await this.redisClient.keys(redisKey)).length > 0;
@@ -137,10 +134,7 @@ class Model {
       throw new Error(`"${redisKey}" already exist!`);
     }
 
-    // FIXME: şema bu fonksiyona gelen value'yu ezmeli ardından onu kullanıcıya geri dönmeliyiz.
-
     valueObject = await this._write(redisKey, valueObject);
-
     return this.createInstance(valueObject, { redisKey });
   }
 
