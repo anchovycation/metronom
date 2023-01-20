@@ -1,5 +1,7 @@
-import { createClient, RedisClientOptions, RedisClientType } from 'redis';
+import { RedisClientOptions } from 'redis';
+import IRedisAdaptor from './IRedisAdaptor';
 import ModelInstance, { DataInfo } from './ModelInstance';
+import NodeRedisAdaptor from './NodeRedisAdaptor';
 import {
   isObject, getKeyValue, safeWrite, safeRead,
 } from './Utilities';
@@ -26,7 +28,7 @@ export interface Schema {
 
 export interface ModelOptions {
   keyUnique?: string,
-  redisClientOptions?: RedisClientOptions,
+  redisClientOptions?: RedisClientOptions | any,
   flexSchema?: boolean,
 }
 
@@ -57,7 +59,7 @@ class Model {
   /** Object struct model */
   public schema: Schema;
 
-  public redisClient: RedisClientType<any, any>;
+  public redisClient: IRedisAdaptor;
 
   /** you can't define any key except the fields in `schema`, but if this value is `true`,
    * you can only add a value to the schema by giving it `keyUnique`
@@ -107,7 +109,7 @@ class Model {
       this.keyUnique = modelOption?.keyUnique;
     }
 
-    this.redisClient = createClient(modelOption?.redisClientOptions);
+    this.redisClient = new NodeRedisAdaptor(modelOption?.redisClientOptions);
     try {
       this.redisClient.connect();
     } catch (error: any) {
