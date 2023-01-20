@@ -23,6 +23,7 @@ It is used effortlessly without installing any plugins like RedisJSON. The syste
 ## Let's start
 ### 1. Install `metronom`
 Firstly, instal this package to your project via your package manager.
+
 **npm**:
 ```bash
 npm i metronom
@@ -32,7 +33,7 @@ npm i metronom
 yarn add metronom
 ```
 ### 2. Create `Metronom` object
-The `Metronom` object is create `Model` with your defined options like port, host, url or ttl. This step is not required but **recomended** because at the unnormal usage scenario(you need to use diffirent url from default redis ...) you must to pass that options to all `Model` defines otherwise `Metronom` object do it automaticly.
+The `Metronom` object is create `Model` with your defined options like `port`, `host`, `url` or `ttl`. This step is not required but **recomended** because at the unnormal usage scenario(you need to use diffirent url from default redis ...) you must to pass that options to all `Model` defines otherwise `Metronom` object do it automatically.
 
 ```js
 import { Metronom } from 'metronom';
@@ -45,8 +46,8 @@ const metronom = new Metronom({
 
 ### 3. Define `Model`
 `Model` is redis hash maper. It has two diffirent flow.
-+ `flex`: you don't need to define schema. All hash keys dynamicly mapped
-+ 'schema based': You define type, default value etc. in to the schema and metronom use it read/write operation. Keys not found in the schema are ignored.
++ `flex`: you don't need to define schema. All hash keys dynamically mapped
++ `schema based`: You define type, default value etc. in to the schema and metronom use it read/write operations. Keys not found in the schema are ignored.
 ```js
 const userModel = metronom.define(
 // const userModel = new Model(
@@ -54,7 +55,9 @@ const userModel = metronom.define(
 );
 ```
 ### 4. Use model's query inferface
-Now, you can use all metronom queries(`Metronom`, `Model` and `ModelInstance`) like `Model.create`, `Model.findById`, `Model.destroy`, `ModelInstance.save`, etc. .Start conding the project that will save the world
+Now, you can use all metronom queries(`Metronom`, `Model` and `ModelInstance`) like `Model.create`, `Model.findById`, `Model.destroy`, `ModelInstance.save`, etc. .
+
+Start coding the project that will save the world :)
 
 **For example**:
 ```js
@@ -83,9 +86,9 @@ const userModel = metronom.define(
       dafeult: false,
     }
   },
-  'users',
+  'users', // default `object`
   { 
-    keyUnique: 'name',
+    keyUnique: 'name', // if you don't define, we use unix timestamp for `keyUniqe` value
     // set `flexSchema` to true and never define schema
   }
 );
@@ -121,6 +124,17 @@ await admin.destroy();
 **NPM Package**:  [https://www.npmjs.com/package/metronom](https://www.npmjs.com/package/metronom)
 
 ## Commands
+### Metronom Basic
+```js
+const metronom = new Metronom({
+  url: 'redis://localhost:6380',
+});
+```
+#### `define`
+It create `Model` from this `Metronom` options. For detail  go to [Model Basics](#model-basics)
+```js
+    const tokenModel = await metronom.define({}, 'tokens', { flexSchema: true });
+```
 
 ### Model Basics
 Represents the Redis object you created in your database. You can create, read, update, delete, filter operations. It also includes system information.
@@ -129,14 +143,31 @@ Represents the Redis object you created in your database. You can create, read, 
 // new Model(<model-schema>, <redis-key-prefix>, <model-options>)
 const userModel = new Model(
   {
-    name: 'John',
-    surname: 'Doe',
-    age: 1,
-    isAdmin: false
+    name: {
+      type: Types.String,
+      default: 'Joe',
+    },
+    surname: {
+      type: Types.String,
+    },
+    age: {
+      type: Types.Number,
+      default: 1,
+    },
+    isAdmin: {
+      type: Types.Boolean,
+      default: false,
+    },
   },
-  'users',
-  { keyUnique: 'name' }
+  'users', // default `object`
+  {
+    keyUnique: 'name', // if you don't define, we use unix timestamp for `keyUniqe` value
+    // set `flexSchema` to true and never define schema
+    // you can set custom `redisClientOptions` here
+  }
 );
+
+// const tokenModel = new Model({}, 'tokens', {isFlex: true});
 ```
 ### CREATE Methods
 #### `create`
@@ -152,7 +183,7 @@ const user = await userModel.create({ name: "Beyza", surname: "Erkan" });
 //   age: 1,
 //   isAdmin: false,
 //   _Model: {
-//     _model: Model,
+//     _model: [Model Object],
 //     _dataInfo: {
 //       redisKey: 'users:Beyza'
 //     }
@@ -205,7 +236,7 @@ await userModel.deleteAll();
 Redis command executer.
 ```js
 // runCommand(<commands>)
-runCommand(['hget', 'user:1234', 'name'])
+userModel.runCommand(['hget', 'user:1234', 'name'])
 ```
 
 ## ModelInstance Basics

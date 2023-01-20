@@ -1,5 +1,25 @@
 # Release Notes
 
+## [v2.0.0 - January 20, 2023](https://github.com/anchovycation/metronom/releases/tag/v2.0.0)
+### Added
+ + `Metronom` object
+ +  Limit parameter added to `Model.getAll` function
+ +  Type and default value support added to schema
+
+---
+
+### Changed
+ +  `MetronomInstance.save` function will save only the changed fields by tracing the proxy
+ +  changedValues added to MetronomInstance
+
+---
+
+### Fixed
+ + Unflex model's empty schema error fixed 
+
+**Full Changelog**: [https://github.com/anchovycation/metronom/compare/v1.4.0...v2.0.0](https://github.com/anchovycation/metronom/compare/v1.4.0...v2.0.0)
+
+
 ## [v1.4.0 - July 12, 2022](https://github.com/anchovycation/metronom/releases/tag/v1.4.0)
 ### Added
  + `ModelInstance.destroy()` function
