@@ -1,45 +1,22 @@
-import { RedisClientOptions } from 'redis';
 import IRedisAdaptor from './IRedisAdaptor';
-import ModelInstance, { DataInfo } from './ModelInstance';
-import NodeRedisAdaptor from './NodeRedisAdaptor';
+import ModelInstance from './ModelInstance';
+import NodeRedisAdaptor from './adaptors/NodeRedisAdaptor';
+import Logger from './Logger';
 import {
-  isObject, getKeyValue, safeWrite, safeRead,
+  isObject,
+  getKeyValue,
+  safeWrite,
+  safeRead,
+  throwError,
 } from './Utilities';
 
-/**
- * Schema of Metronom model
- * @example
- * ```
- * import { Types } from 'metronom';
- * const schema = {
- *   isAdmin: {
- *     type: Types.Boolean,
- *     default: false,
- *   }
- * };
- * ```
- */
-export interface Schema {
-  [index: string]: {
-    type: any,
-    default?: unknown,
-  }
-}
-
-export interface ModelOptions {
-  keyUnique?: string,
-  redisClientOptions?: RedisClientOptions | any,
-  flexSchema?: boolean,
-}
-
-export interface FilterFunction {
-  /* eslint-disable-next-line */
-  (value: ModelInstance, index: number, array: ModelInstance[]): boolean
-}
-
-export interface FilterOptions {
-  limit?: number,
-}
+import {
+  Schema,
+  ModelOptions,
+  FilterOptions,
+  FilterFunction,
+  DataInfo,
+} from './Interfaces';
 
 /**
  * Model Class
@@ -84,18 +61,19 @@ class Model {
     this.schema = schema;
     this.keyPrefix = keyPrefix;
     this.flexSchema = modelOption?.flexSchema ? modelOption?.flexSchema : false;
+    new Logger(modelOption?.log);
 
     if (!this.flexSchema) {
       if (Object.keys(schema).length === 0) {
-        throw new Error('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
+        throwError('Only flex schema can be empty! Set the "modelOption.flexSchema" to "true"');
       }
 
       Object.entries(schema).forEach(([key, value]) => {
         if (!value.type) {
-          throw new Error(`"${key}" key must have to "type" property in the schema!`);
+          throwError(`"${key}" key must have to "type" property in the schema!`);
         }
         if (typeof value.type !== 'function') {
-          throw new Error(`"schema.${key}.type" must be constructor! You send "${value.type}"`);
+          throwError(`"schema.${key}.type" must be constructor! You send "${value.type}"`);
         }
       });
     }
@@ -104,7 +82,7 @@ class Model {
       this.keyUnique = undefined;
     } else {
       if (!Object.keys(schema).includes(modelOption?.keyUnique)) {
-        throw new Error(`${modelOption?.keyUnique} keyUnique must be in to schema!`);
+        throwError(`${modelOption?.keyUnique} keyUnique must be in to schema!`);
       }
       this.keyUnique = modelOption?.keyUnique;
     }
@@ -113,7 +91,7 @@ class Model {
     try {
       this.redisClient.connect();
     } catch (error: any) {
-      throw new Error(`Metronom: redis connecting error: ${error.message}`);
+      throwError(`Metronom: redis connecting error: ${error.message}`);
     }
   }
 
@@ -126,14 +104,14 @@ class Model {
    */
   public async create(valueObject: Object): Promise<ModelInstance> {
     if (!isObject(valueObject) && !Array.isArray(valueObject)) {
-      throw new Error(`Value must be object or array!. Your type is: ${typeof valueObject}`);
+      throwError(`Value must be object or array!. Your type is: ${typeof valueObject}`);
     }
 
     const redisKey = this.generateRedisKey(valueObject);
     const isExist = (await this.redisClient.keys(redisKey)).length > 0;
 
     if (isExist) {
-      throw new Error(`"${redisKey}" already exist!`);
+      throwError(`"${redisKey}" already exist!`);
     }
 
     valueObject = await this._write(redisKey, valueObject);
@@ -210,7 +188,7 @@ class Model {
    */
   public async filter(filterFunction: FilterFunction): Promise<Array<ModelInstance> | []> {
     if (typeof filterFunction !== 'function') {
-      throw new Error('The type of the parameter of the "filter" function must be "function"!');
+      throwError('The type of the parameter of the "filter" function must be "function"!');
     }
     const records: Array<ModelInstance> = await this.getAll();
     const filtredRecords = records.filter(async (value, index, array) =>

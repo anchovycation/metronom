@@ -1,15 +1,9 @@
 import Model from './Model';
 import { safeWrite } from './Utilities';
-
-export interface DataInfo {
-  redisKey: String,
-}
-
-interface ModelFields {
-  _model: Model;
-  _previousDataValues: any | Object;
-  _dataInfo: DataInfo;
-}
+import {
+  ModelFields,
+  DataInfo,
+} from './Interfaces';
 
 /**
  * ModelInstance Class

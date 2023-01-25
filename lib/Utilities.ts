@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 import { Types } from './Constants';
-import { Schema } from './Model';
+import { Schema } from './Interfaces';
+import Logger from './Logger';
 /**
  * Utilities
  * @category Utilities
@@ -98,4 +99,13 @@ export const safeWrite = async (
     .map(([key, value]) => [key, typeof value === 'object' ? JSON.stringify(value) : value]); // include array, objects etc.
   await redisClient.hSet(redisKey, keysAndValues);
   return data;
+};
+
+/**
+ * Throw and log error with Metronom's internal Logger
+ * @param message {string}
+ */
+export const throwError = (message: string) => {
+  Logger.error(message);
+  throw new Error(message);
 };
