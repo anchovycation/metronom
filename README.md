@@ -61,7 +61,7 @@ Start coding the project that will save the world :)
 
 **For example**:
 ```js
-const { Metronom, Model, Types } = require('metronom');
+const { Metronom, Model, Types, LogLevels } = require('metronom');
 
 const metronom = new Metronom({
   url: "redis://localhost:6380",
@@ -89,6 +89,7 @@ const userModel = metronom.define(
   'users', // default `object`
   { 
     keyUnique: 'name', // if you don't define, we use unix timestamp for `keyUniqe` value
+    log: LogLevels.All, // default is `None`
     // set `flexSchema` to true and never define schema
   }
 );
