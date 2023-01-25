@@ -1,4 +1,5 @@
 /* eslint-disable object-shorthand */
+
 /**
  * Metronom default data types.
  * @module Types

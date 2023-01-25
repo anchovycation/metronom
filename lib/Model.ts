@@ -1,8 +1,7 @@
-import { RedisClientOptions } from 'redis';
 import IRedisAdaptor from './IRedisAdaptor';
-import ModelInstance, { DataInfo } from './ModelInstance';
+import ModelInstance from './ModelInstance';
 import NodeRedisAdaptor from './adaptors/NodeRedisAdaptor';
-import Logger, { LogLevels } from './Logger';
+import Logger from './Logger';
 import {
   isObject,
   getKeyValue,
@@ -11,41 +10,13 @@ import {
   throwError,
 } from './Utilities';
 
-/**
- * Schema of Metronom model
- * @example
- * ```
- * import { Types } from 'metronom';
- * const schema = {
- *   isAdmin: {
- *     type: Types.Boolean,
- *     default: false,
- *   }
- * };
- * ```
- */
-export interface Schema {
-  [index: string]: {
-    type: any,
-    default?: unknown,
-  }
-}
-
-export interface ModelOptions {
-  keyUnique?: string;
-  redisClientOptions?: RedisClientOptions | any;
-  flexSchema?: boolean;
-  log?: boolean | LogLevels;
-}
-
-export interface FilterFunction {
-  /* eslint-disable-next-line */
-  (value: ModelInstance, index: number, array: ModelInstance[]): boolean
-}
-
-export interface FilterOptions {
-  limit?: number,
-}
+import {
+  Schema,
+  ModelOptions,
+  FilterOptions,
+  FilterFunction,
+  DataInfo,
+} from './Interfaces';
 
 /**
  * Model Class

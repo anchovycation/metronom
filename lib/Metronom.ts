@@ -1,5 +1,9 @@
 import { RedisClientOptions } from 'redis';
-import Model, { ModelOptions, Schema } from './Model';
+import Model from './Model';
+import {
+  ModelOptions,
+  Schema,
+} from './Interfaces';
 
 /**
  * Metronom model creator

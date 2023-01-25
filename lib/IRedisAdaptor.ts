@@ -1,4 +1,8 @@
 /* eslint-disable no-unused-vars */
+/**
+ * Redis Interface
+ * @internal
+ */
 interface IRedisAdaptor{
   redisClient: any;
   hGetAll(redisKey: string): Promise<object>;

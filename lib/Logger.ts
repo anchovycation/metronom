@@ -1,5 +1,9 @@
 import { LogLevels } from './Enums';
 
+/**
+ * Metronom's internal logger
+ * @internal
+ */
 class Logger {
   static level: LogLevels | null = null;
 
