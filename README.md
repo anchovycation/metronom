@@ -126,19 +126,48 @@ await admin.destroy();
 
 ## Commands
 ### Metronom Basic
+Metronom object is main and static operator object which `Model` creator and non-hash type operator.
+
 ```js
 const metronom = new Metronom({
   url: 'redis://localhost:6380',
 });
 ```
+
+### Configs
+
+**Paramaters:**
+> All keys in to the one object
+
+| Key | Type | Default Value |
+| --- | ---- | ------------- |
+| `redisClientOptions` | `RedisClientOptions` `object` | `undefined` |
+| `log` | `boolean` `LogLevels` | `false` |
+
 #### `define`
 It create `Model` from this `Metronom` options. For detail  go to [Model Basics](#model-basics)
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| schema | `Schema` |  |
+| key prefix | `string` | `objects` |
+| model options | `ModelOptions` | `undefined` |
+
 ```js
     const tokenModel = await metronom.define({}, 'tokens', { flexSchema: true });
 ```
 
 ### Model Basics
 Represents the Redis object you created in your database. You can create, read, update, delete, filter operations. It also includes system information.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| schema | `Schema` |  |
+| key prefix | `string` | `objects` |
+| model options | `ModelOptions` | `undefined` |
+
 ```js
 // create user model
 // new Model(<model-schema>, <redis-key-prefix>, <model-options>)
@@ -174,6 +203,12 @@ const userModel = new Model(
 #### `create`
 
 Creates `ModelInstance` by parameter then saves it to Redis and returns it.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| data | `object` | `{}` |
+
 ```js
 // create user
 // create(<value-object>)
@@ -195,6 +230,12 @@ const user = await userModel.create({ name: "Beyza", surname: "Erkan" });
 ### READ Methods
 #### `findById`
 Fetches record by  `keyUnique` . Returns ModelInstance or null.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| key unique | `number` `string` |  |
+
 ```js
 // find user with id
 // findById(<id>)
@@ -203,6 +244,15 @@ console.log({ user: user.getPureData() });
 ```
 #### `getAll`
 Fetches all records with the same  `keyPrefix`  value. Returns list of ModelInstance.
+
+**Paramaters:**
+> All keys in to the one object
+
+| Key | Type | Default Value |
+| --- | ---- | ------------- |
+| `limit` | `number` | undefined |
+
+
 ```js
 // find all users
 let users = await userModel.getAll();
@@ -210,6 +260,12 @@ console.log({ users });
 ```
 #### `filter`
 Filters in the same way as  `Array.filter`, pulling all records with the same  `keyPrefix`  value. Returns filtred ModelInstances or empty array.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| filter function | `FilterFunction` |  |
+
 ```js
 // filters users by condition
 // filter(filter-function)
@@ -220,6 +276,12 @@ console.log({ users })
 ### DELETE Methods
 #### `deleteById`
 Delete record by `keyUnique`.  Returns deleted records count it always '1' if it succesfull.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| key unique | `number` `string` |  |
+
 ```js
 // delete user with id
 // deleteById(<id>)
@@ -235,6 +297,12 @@ await userModel.deleteAll();
 ### Other Methods
 #### `runCommand`
 Redis command executer.
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| command array | `array` |  |
+
 ```js
 // runCommand(<commands>)
 userModel.runCommand(['hget', 'user:1234', 'name'])

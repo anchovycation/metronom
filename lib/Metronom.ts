@@ -1,9 +1,11 @@
 import { RedisClientOptions } from 'redis';
 import Model from './Model';
 import {
+  MetronomOptions,
   ModelOptions,
   Schema,
 } from './Interfaces';
+import { LogLevels } from './Enums';
 
 /**
  * Metronom model creator
@@ -11,17 +13,20 @@ import {
  * @category Metronom
  */
 class Metronom {
-  public redisClientOptions: RedisClientOptions;
+  public redisClientOptions?: RedisClientOptions;
+
+  public log?: boolean | LogLevels;
 
   /**
    * Base Metronom object.
    * You can create new metronom instance with diffirent options like redis url.
    * @constructor
-   * @param {RedisClientOptions} redisClientOptions redis client settings
+   * @param {MetronomOptions} options redis client settings
    * @returns {Metronom} new record of Metronom object
    */
-  constructor(redisClientOptions: RedisClientOptions) {
-    this.redisClientOptions = redisClientOptions;
+  constructor(options: MetronomOptions) {
+    this.redisClientOptions = options?.redisClientOptions;
+    this.log = options?.log;
   }
 
   /**
@@ -43,8 +48,13 @@ class Metronom {
       ? this.redisClientOptions
       : modelOptions?.redisClientOptions;
 
+    const log = this.log
+      ? this.log
+      : modelOptions?.log;
+
     return new Model(schema, keyPrefix, {
       ...modelOptions,
+      log,
       redisClientOptions: redisOption,
     });
   }

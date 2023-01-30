@@ -1,5 +1,14 @@
 # Release Notes
 
+## [v2.1.0 - January 30, 2023](https://github.com/anchovycation/metronom/releases/tag/v2.1.0)
+### Added
+ + Internal Logger added
+ + IRedisAdaptor interface and NodeRedisAdaptor added, basic redis command abstructed
+
+**Full Changelog**: [https://github.com/anchovycation/metronom/compare/v2.0.0...v2.1.0](https://github.com/anchovycation/metronom/compare/v2.0.0...v2.1.0)
+
+---
+
 ## [v2.0.0 - January 20, 2023](https://github.com/anchovycation/metronom/releases/tag/v2.0.0)
 ### Added
  + `Metronom` object

@@ -26,6 +26,15 @@ export interface Schema {
 }
 
 /**
+ * Metronom constructor argument
+ * @interface
+ */
+export interface MetronomOptions {
+  redisClientOptions?: RedisClientOptions,
+  log?: boolean | LogLevels;
+}
+
+/**
  * Metronom Model settings
  * @interface
  */
