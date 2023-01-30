@@ -39,8 +39,10 @@ The `Metronom` object is create `Model` with your defined options like `port`, `
 import { Metronom } from 'metronom';
 
 const metronom = new Metronom({
-  host: '172.168.1.123',
-  port: 1234
+  redisClientOptions: {
+    host: '172.168.1.123',
+    port: 1234
+  }
 });
 ```
 
@@ -64,8 +66,11 @@ Start coding the project that will save the world :)
 const { Metronom, Model, Types, LogLevels } = require('metronom');
 
 const metronom = new Metronom({
-  url: "redis://localhost:6380",
-  // redisClient options
+  redisClientOptions: {
+    host: '172.168.1.123',
+    port: 1234
+  },
+  log: LogLevels.Error
 });
 
 const userModel = metronom.define(
@@ -130,7 +135,11 @@ Metronom object is main and static operator object which `Model` creator and non
 
 ```js
 const metronom = new Metronom({
-  url: 'redis://localhost:6380',
+  redisClientOptions: {
+    url: 'redis://localhost:6380',
+    // host: '172.168.1.123',
+    // port: 1234
+  }
 });
 ```
 
