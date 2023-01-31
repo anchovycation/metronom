@@ -20,13 +20,15 @@ You can  **save**,  **read**,  **update**,  **filter**,  **delete**  and  **bulk
 
 It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript.
 
-**Website**: [https://anchovycation.github.io/metronom/](https://anchovycation.github.io/metronom/s)
-**Source Code**:  [anchovycation/metronom](https://github.com/anchovycation/metronom)
-**NPM Package**:  [https://www.npmjs.com/package/metronom](https://www.npmjs.com/package/metronom)
+| Documentation | Source Code | Package |
+| ------- | ----------- | ------- |
+| [anchovycation.github.io/metronom](https://anchovycation.github.io/metronom/) | [GitHub](https://github.com/anchovycation/metronom) | [npm](https://www.npmjs.com/package/metronom) |
+
+---
 
 ## Let's start
 ### 1. Install `metronom`
-Firstly, instal this package to your project via your package manager.
+Firstly, install this package to your project via your package manager.
 
 **npm**:
 ```bash
