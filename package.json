@@ -29,7 +29,7 @@
     "test": "docker-compose -f ./tests/docker-compose.yml up -d && npm run test:unit --detectOpenHandles ; cd tests && docker compose down",
     "lint": "eslint --ext .ts .",
     "lint:fix": "npm run lint -- --fix",
-    "doc": "typedoc lib/*.ts"
+    "doc": "typedoc --plugin typedoc-plugin-markdown --out docs lib/*.ts"
   },
   "dependencies": {
     "redis": "^4.0.3"
@@ -43,6 +43,7 @@
     "eslint-plugin-import": "^2.25.4",
     "jest": "^27.5.0",
     "typedoc": "^0.23.2",
+    "typedoc-plugin-markdown": "^3.14.0",
     "typescript": "^4.5.5"
   },
   "repository": {
@@ -52,5 +53,5 @@
   "bugs": {
     "url": "https://github.com/anchovycation/metronom/issues"
   },
-  "homepage": "https://github.com/anchovycation/metronom"
+  "homepage": "https://anchovycation.github.io/metronom/"
 }
