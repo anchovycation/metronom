@@ -1,11 +1,15 @@
 import { RedisClientOptions } from 'redis';
 import Model from './Model';
+import IRedisAdaptor from './IRedisAdaptor';
 import {
   MetronomOptions,
   ModelOptions,
   Schema,
 } from './Interfaces';
 import { LogLevels } from './Enums';
+import { throwError } from './Utilities';
+import NodeRedisAdaptor from './adaptors/NodeRedisAdaptor';
+import Logger from './Logger';
 
 /**
  * Metronom model creator
@@ -17,6 +21,8 @@ class Metronom {
 
   public log?: boolean | LogLevels;
 
+  #redisClient: IRedisAdaptor | null;
+
   /**
    * Base Metronom object.
    * You can create new metronom instance with diffirent options like redis url.
@@ -27,6 +33,7 @@ class Metronom {
   constructor(options: MetronomOptions) {
     this.redisClientOptions = options?.redisClientOptions;
     this.log = options?.log;
+    this.#redisClient = null;
   }
 
   /**
@@ -57,6 +64,48 @@ class Metronom {
       log,
       redisClientOptions: redisOption,
     });
+  }
+
+  /**
+   * Create String key or update if it exist.
+   * Redis's "SET" command
+   * @param {strin} key redis key
+   * @param {string} value value
+   * @returns it return "OK" if the process done
+   */
+  public async setKey(key: string, value: any): Promise<string> {
+    if (key === '') {
+      throwError('setKey: Keys can\'t be empty!');
+    }
+
+    this.#connectToRedis();
+    // @ts-ignore
+    return await this.#redisClient.set(key, value);
+  }
+
+  /**
+   * Read String key
+   * Redis's "GET" command
+   * @param {string} key Redis key
+   * @returns if the key is exist it return the value else return null
+   */
+  public async getKey(key: string): Promise<string | null> {
+    if (key === '' || key === undefined) {
+      throwError('getKey: Keys can\'t be empty!');
+    }
+
+    this.#connectToRedis();
+    // @ts-ignore
+    return this.#redisClient.get(key);
+  }
+
+  #connectToRedis() {
+    if (this.#redisClient === null) {
+      // @ts-ignore
+      this.#redisClient = new NodeRedisAdaptor(this.redisClientOptions);
+      this.#redisClient.connect();
+      new Logger(this.log);
+    }
   }
 }
 

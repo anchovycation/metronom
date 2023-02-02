@@ -10,6 +10,16 @@ class NodeRedisAdaptor implements IRedisAdaptor {
     this.redisClient = createClient(options);
   }
 
+  set(key: string, value: any): Promise<any> {
+    Logger.log(`set ${key} ${value}`);
+    return this.redisClient.set(key, value);
+  }
+
+  get(key: string): Promise<string | null> {
+    Logger.log(`get ${key}`);
+    return this.redisClient.get(key);
+  }
+
   hGetAll(redisKey: string): Promise<object> {
     Logger.log(`hGetAll ${redisKey}`);
     return this.redisClient.hGetAll(redisKey);
@@ -21,6 +31,7 @@ class NodeRedisAdaptor implements IRedisAdaptor {
   }
 
   connect(): void {
+    Logger.log('connect');
     this.redisClient.connect();
   }
 

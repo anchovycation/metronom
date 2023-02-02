@@ -13,6 +13,8 @@ interface IRedisAdaptor{
   del(redisKey: string): Promise<number>;
   sendCommand(commands: Array<string>): Promise<unknown>;
   echo(message: any):any
+  set(key: string, value: any): Promise<any>;
+  get(key: string): Promise<string | null>;
 }
 
 export default IRedisAdaptor;

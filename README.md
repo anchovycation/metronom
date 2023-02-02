@@ -18,7 +18,7 @@ Metronom is user friendly Redis ORM based on  [node-redis](https://github.com/re
 
 You can  **save**,  **read**,  **update**,  **filter**,  **delete**  and  **bulk**  operations JavaScript objects in Redis  **without needing to know Redis commands**.
 
-It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript.
+It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript. ***Also you can use String Data type too.***
 
 | Documentation | Source Code | Package |
 | ------- | ----------- | ------- |
@@ -51,6 +51,14 @@ const metronom = new Metronom({
   }
 });
 ```
+
+#### 2.1 Get/Set String Key
+  Now, you can get/set key from defined metronom object
+  ```js
+  
+    const isSuccess = await metronom.setKey('foo', 'bar'); // its return "OK"
+    const value = await metronom.getKey('foo'); // bar
+  ```
 
 ### 3. Define `Model`
 `Model` is redis hash maper. It has two diffirent flow.
@@ -169,6 +177,32 @@ It create `Model` from this `Metronom` options. For detail  go to [Model Basics]
 
 ```js
     const tokenModel = await metronom.define({}, 'tokens', { flexSchema: true });
+```
+
+#### `setKey`
+Set String key
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| key | `string` |  |
+| value | `string` |  |
+
+```js
+  const isOk = await metronom.setKey('foo', 'bar'); // OK
+```
+
+#### `getKey`
+Get String key
+
+**Paramaters:**
+| paramater | Type | Default Value |
+| --- | ---- | ------------- |
+| key | `string` |  |
+
+```js
+  // await metronom.setKey('foo', 'bar');
+  const value = await metronom.getKey('foo'); // bar
 ```
 
 ### Model Basics
