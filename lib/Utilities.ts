@@ -83,7 +83,7 @@ export const safeWrite = async (
     data = {};
 
     Object.entries(schema).forEach(([key, value]) => {
-      if (value.default === null || value.default === undefined) {
+      if (Object.hasOwn(data, key)) {
         data[key] = value.default;
       } else {
         // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
