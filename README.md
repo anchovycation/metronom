@@ -20,6 +20,8 @@ You can  **save**,  **read**,  **update**,  **filter**,  **delete**  and  **bulk
 
 It is used effortlessly without installing any plugins like RedisJSON. The system works with Hashes. It shreds the objects and saves them as key strings in the hash, and while reading, they break it down again according to the given scheme and type conversion with TypeScript. ***Also you can use String Data type too.***
 
+> Although currently only Hash and String types are processed, our [new version](https://github.com/anchovycation/metronom/milestone/2 "see v3.0.0 milestone") that will support [all core types](https://redis.io/docs/data-types/) is on the way.
+
 | Documentation | Source Code | Package |
 | ------- | ----------- | ------- |
 | [anchovycation.github.io/metronom](https://anchovycation.github.io/metronom/) | [GitHub](https://github.com/anchovycation/metronom) | [npm](https://www.npmjs.com/package/metronom) |
