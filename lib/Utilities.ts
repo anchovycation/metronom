@@ -50,7 +50,7 @@ export const safeRead = async (
     .entries(response)
     .map(
       ([key, value]: [string, any]) => {
-        if (value !== undefined || value !== null) {
+        if (value != undefined || value != null) {
           if (hasJsonStructure(value)) {
             value = JSON.parse(value);
           } else {
@@ -83,7 +83,7 @@ export const safeWrite = async (
     data = {};
 
     Object.entries(schema).forEach(([key, value]) => {
-      if (Object.hasOwn(data, key)) {
+      if (!Object.hasOwn(temp, key)) {
         data[key] = value.default;
       } else {
         // data: { a, b, c } | schema: { b, c, d } ==> temp: { b, c, d}
