@@ -4,7 +4,9 @@ const { Metronom } = require('../../dist');
 describe('Metronom.constructor()', () => {
   test('client should connect diffrent url', async () => {
     const m = new Metronom({
-      url: 'redis://localhost:6380',
+      redisClientOptions: {
+        url: 'redis://localhost:6380',
+      },
     });
     const model = await m.define({}, 'users', { flexSchema: true });
     expect(await model.redisClient.echo('test')).toBe('test');
@@ -14,7 +16,9 @@ describe('Metronom.constructor()', () => {
 describe('Metronom.define()', () => {
   test('client should define model from custom url', async () => {
     const m = new Metronom({
-      url: 'redis://localhost:6380',
+      redisClientOptions: {
+        url: 'redis://localhost:6380',
+      },
     });
     const userModel = m.define({}, 'users', { flexSchema: true });
     const user = await userModel.create({ name: 'joe' });
@@ -25,7 +29,9 @@ describe('Metronom.define()', () => {
 
 describe('Metronom.setKey()', () => {
   const m = new Metronom({
-    url: 'redis://localhost:6380',
+    redisClientOptions: {
+      url: 'redis://localhost:6380',
+    },
   });
 
   test('client should get error when key was empty', async () => {
@@ -45,7 +51,9 @@ describe('Metronom.setKey()', () => {
 
 describe('Metronom.getKey()', () => {
   const m = new Metronom({
-    url: 'redis://localhost:6380',
+    redisClientOptions: {
+      url: 'redis://localhost:6380',
+    },
   });
 
   test('client should get error when key was empty', async () => {
