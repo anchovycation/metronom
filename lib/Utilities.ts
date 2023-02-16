@@ -1,11 +1,13 @@
+/**
+ * Utilities
+ * @ignore
+ * @module
+ */
+
 /* eslint-disable eqeqeq */
 import { Types } from './Constants';
 import { Schema } from './Interfaces';
 import Logger from './Logger';
-/**
- * Utilities
- * @category Utilities
- */
 
 export function isObject(variable: any): Boolean {
   return variable === null || (variable && variable.toString() === '[object Object]');

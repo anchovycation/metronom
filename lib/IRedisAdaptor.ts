@@ -2,7 +2,9 @@
 
 /**
  * Redis Interface
+ * @ignore
  * @internal
+ * @module
  */
 interface IRedisAdaptor{
   redisClient: any;

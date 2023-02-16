@@ -24,6 +24,10 @@ class Logger {
     Logger.level = LogLevels.None;
   }
 
+  /**
+   * @ignore
+   * @param message
+   */
   static #log(message: string) {
     console.log(message);
   }

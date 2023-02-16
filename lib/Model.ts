@@ -120,6 +120,7 @@ class Model {
 
   /**
  * Internal record save function
+ * @ignore
  * @param redisKey - Redis record key with/without `keyUnique`
  * @param data
  * @returns raw data
@@ -137,6 +138,7 @@ class Model {
 
   /**
    * Internal read function
+   * @ignore
    * @param redisKey - Redis record key with/without `keyUnique`
    * @returns raw data
    */
@@ -235,6 +237,7 @@ class Model {
   /**
    * Generate full redis key. if model has a `keyUnique` use it
    * from `data` else generate random unique
+   * @ignore
    * @param data - ModelInstance data
    */
   private generateRedisKey(data: Object): string {
@@ -246,6 +249,7 @@ class Model {
 
   /**
    * Create ModelInstance from raw data
+   * @ignore
    * @param data - raw
    * @param dataInfo
    */

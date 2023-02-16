@@ -99,6 +99,9 @@ class Metronom {
     return this.#redisClient.get(key);
   }
 
+  /**
+   * @ignore
+   */
   #connectToRedis() {
     if (this.#redisClient === null) {
       // @ts-ignore
