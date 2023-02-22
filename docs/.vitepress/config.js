@@ -77,7 +77,7 @@ export default {
   },
 
   head: [
-    ["link", { rel: "icon", href: `metronom/metronom.png` }],
+    ["link", { rel: "icon", href: `/metronom/metronom.png` }],
     ["meta", { name: "theme-color", content: "#6688C1" }],
     ["meta", { name: "apple-mobile-web-app-capable", content: "yes" }],
     ["link", { rel: "stylesheet", href: "/styles.css" }],
