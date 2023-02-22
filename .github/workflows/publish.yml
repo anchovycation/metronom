@@ -2,7 +2,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - gh-pages
+      - doc
 jobs:
   deploy:
     runs-on: ubuntu-latest
